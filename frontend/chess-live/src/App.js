@@ -1,7 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js'
+import './App.css';
+import Button from '@mui/material/Button';
+import ResponsiveAppBar from "./components/navbar/navbar";
+import CustomChessboard from "./components/chessboard/chessboard";
+import CameraVideo from "./components/camera/camera";
+import './components/camera/camera.css'
+import Webcam from "react-webcam";
+import WebcamImage from "./components/camera/webcamImage";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
+import ConfidenceInput from "./components/settings/modelConfidence/confidenceInput";
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -11,6 +21,18 @@ function App() {
   const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
   const [error, setError] = useState(null);
   
+
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -44,37 +66,31 @@ function App() {
 
   return (
     <div className="App">
+      <ResponsiveAppBar></ResponsiveAppBar>
       <div>
         <h1>Chessboard FEN Generator</h1>
         <div>
-          <input type="file" onChange={handleFileChange} />
-        </div>
-        <div>
-          <label>
-            Corner Confidence:
-            <input
-              type="number"
-              value={cornerConf}
-              onChange={(e) => setCornerConf(parseFloat(e.target.value))}
-              step="0.1"
-              min="0"
-              max="1"
+        <ConfidenceInput
+            cornerConf={cornerConf}
+            setCornerConf={setCornerConf}
+            piecesConf={piecesConf}
+            setPiecesConf={setPiecesConf}
+          />
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+          >
+            Upload files
+            <VisuallyHiddenInput
+              type="file"
+              onChange={handleFileChange}
+              multiple
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Pieces Confidence:
-            <input
-              type="number"
-              value={piecesConf}
-              onChange={(e) => setPiecesConf(parseFloat(e.target.value))}
-              step="0.1"
-              min="0"
-              max="1"
-            />
-          </label>
-        </div>
+          </Button>
+        </div>        
         <div>
           <button onClick={handleSubmit}>Submit</button>
         </div>
@@ -82,12 +98,15 @@ function App() {
           {error && <p style={{ color: "red" }}>{error}</p>}
           {fen && <pre>{JSON.stringify(fen, null, 2)}</pre>}
         </div>
-        <div>
-          <Chessboard position={fen} boardWidth={500}>
-
-          </Chessboard>
-        </div>
+        <CustomChessboard fen={fen}></CustomChessboard>
       </div>
+      {/* <div className="CameraField">
+        <CameraVideo></CameraVideo>
+      </div> */}
+
+      <div className="App">
+      <Webcam />
+    </div>
       
     </div>
   );
