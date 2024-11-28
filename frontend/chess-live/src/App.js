@@ -12,6 +12,8 @@ import WebcamImage from "./components/camera/webcamImage";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import ConfidenceInput from "./components/settings/modelConfidence/confidenceInput";
+import ChessPGNBreadcrumbs from './components/pgn/pgnArea'
+
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -20,7 +22,20 @@ function App() {
   const [game, setGame] = useState(new Chess());
   const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
   const [error, setError] = useState(null);
-  
+  const [pgn, setPgn] = useState(`1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7`)
+
+  // const [moves, setMoves] = useState(null);
+  // game.move('e4');
+  // game.move('e5');
+  // game.move('f4');
+  // game.move('exf4');
+ 
+  console.log(game.moves());
+  game.move("e4")
+  game.move("e5");
+  game.move("f4");
+  game.move("exf4");
+  console.log(game.history());
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -103,6 +118,11 @@ function App() {
       {/* <div className="CameraField">
         <CameraVideo></CameraVideo>
       </div> */}
+
+      <div style={{ padding: 20 }}>
+        <h1>Chess PGN Viewer</h1>
+        <ChessPGNBreadcrumbs moves={game.history()} />
+      </div>
 
       <div className="App">
       <Webcam />
