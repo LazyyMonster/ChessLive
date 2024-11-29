@@ -13,7 +13,7 @@ import CameraList from '../cameraList/cameraList.js';
 
 const pages = ['Settings', 'Play'];
 
-function ResponsiveAppBar() {
+export default function ResponsiveAppBar({ setCameraId }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
@@ -59,14 +59,10 @@ function ResponsiveAppBar() {
           </Box>
             
           <SettingsIcon></SettingsIcon>
-          <Box>
 
-          </Box>
-
-          <CameraList></CameraList>
+          {/* <CameraList setCameraId={setCameraId}></CameraList> */}
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
-export default ResponsiveAppBar;

@@ -5,14 +5,14 @@ import './App.css';
 import Button from '@mui/material/Button';
 import ResponsiveAppBar from "./components/navbar/navbar";
 import CustomChessboard from "./components/chessboard/chessboard";
-import CameraVideo from "./components/camera/camera";
+import CameraView from "./components/camera/camera";
 import './components/camera/camera.css'
-import Webcam from "react-webcam";
 import WebcamImage from "./components/camera/webcamImage";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import ConfidenceInput from "./components/settings/modelConfidence/confidenceInput";
 import ChessPGNBreadcrumbs from './components/pgn/pgnArea'
+import PlayContainer from "./components/container/playContainer";
 
 
 function App() {
@@ -24,18 +24,21 @@ function App() {
   const [error, setError] = useState(null);
   const [pgn, setPgn] = useState(`1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7`)
 
+  const [cameraId, setCameraId] = useState(null);
+
   // const [moves, setMoves] = useState(null);
   // game.move('e4');
   // game.move('e5');
   // game.move('f4');
   // game.move('exf4');
  
-  console.log(game.moves());
-  game.move("e4")
-  game.move("e5");
-  game.move("f4");
-  game.move("exf4");
-  console.log(game.history());
+  // console.log(game.moves());
+  // game.move("e4")
+  // game.move("e5");
+  // game.move("f4");
+  // game.move("exf4");
+  // console.log(game.history());
+  // game.loadPgn('1. e4 d5 2. e5 e6 3. d4 c5 4. Be3 Nc6 5. Bb5 Qa5+ 6. Nc3 cxd4 7. Bxd4 Bb4 8. Bxc6+ bxc6 9. Ne2 c5 10. Be3 d4 11. Bd2 dxc3 12. bxc3 Ba3 13. c4 Bb4 14. c3 Ba3 15. Qb3 Bd7 16. O-O Ne7 17. Rfe1 O-O 18. Ng3 Rab8 19. Qc2 Rb2 20. Qd3 Rd8 21. Bc1 Rb7 22. Bxa3 Qxa3 23. Reb1 Qa6 24. Rb3 Rdb8 25. Rxb7 Qxb7 26. h3 Ng6 27. Re1 Bc6 28. Qe3 Bxg2 29. Qxc5 Bf3 30. Qe3 Bc6 31. c5 Nh4 32. Qd4 Nf3+ 33. Kf1 Nxd4 34. cxd4 Qb5+ 35. Kg1 Qc4 36. Rd1 Qd5 37. Kf1 Rb2 38. Ke1 Qg2 39. Rd2 Qg1+ 40. Nf1 Rb1+ 41. Ke2 Qxf1+ 42. Ke3 Re1+ 43. Kf4 Qxh3 44. Rb2 Re4+ 45. Kg5 h6# 0-1')
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -81,52 +84,11 @@ function App() {
 
   return (
     <div className="App">
-      <ResponsiveAppBar></ResponsiveAppBar>
-      <div>
-        <h1>Chessboard FEN Generator</h1>
-        <div>
-        <ConfidenceInput
-            cornerConf={cornerConf}
-            setCornerConf={setCornerConf}
-            piecesConf={piecesConf}
-            setPiecesConf={setPiecesConf}
-          />
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload files
-            <VisuallyHiddenInput
-              type="file"
-              onChange={handleFileChange}
-              multiple
-            />
-          </Button>
-        </div>        
-        <div>
-          <button onClick={handleSubmit}>Submit</button>
-        </div>
-        <div>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          {fen && <pre>{JSON.stringify(fen, null, 2)}</pre>}
-        </div>
-        <CustomChessboard fen={fen}></CustomChessboard>
+      <ResponsiveAppBar setCameraId={setCameraId}></ResponsiveAppBar>
+      <h1>Live Position</h1>
+      <div className="content">
+        <PlayContainer game={game} fen={fen} cameraId={cameraId}></PlayContainer>
       </div>
-      {/* <div className="CameraField">
-        <CameraVideo></CameraVideo>
-      </div> */}
-
-      <div style={{ padding: 20 }}>
-        <h1>Chess PGN Viewer</h1>
-        <ChessPGNBreadcrumbs moves={game.history()} />
-      </div>
-
-      <div className="App">
-      <Webcam />
-    </div>
       
     </div>
   );

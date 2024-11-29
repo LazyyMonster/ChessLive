@@ -2,18 +2,16 @@
 import Webcam from "react-webcam";
 
 
-function CameraVideo() {
-    const videoConstraints = {
-      width: { min: 480 },
-      height: { min: 720 },
-      facingMode: { exact: "environment" }
-    };
-  
-    return (
-      <div className="App">
-        <Webcam width={480} height={720} videoConstraints={videoConstraints} />
-      </div>
-    );
-  }
+export default function CameraView(cameraId) {
+  const videoConstraints = {
+    // width: { min: 480 },
+    // height: { min: 480 },
+    facingMode: { exact: "environment" }
+  };
 
-  export default CameraVideo;
+  console.log("camera view id", cameraId);
+
+  return (
+    <Webcam width={240} height={240} videoConstraints={cameraId} />
+  );
+}

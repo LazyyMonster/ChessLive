@@ -1,0 +1,38 @@
+.parent {
+    display: flex;
+    height: 70vh; /* Full height of the viewport */
+    width: 70vw;  /* Full width of the viewport */
+  }
+  
+  .left {
+    flex: 3; /* 60% of the width */
+    background-color: #f0f0f0; /* Optional: For visualization */
+    height: 100%; /* Take full height of the parent */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .right {
+    flex: 2; /* 40% of the width */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Take full height of the parent */
+  }
+  
+  .pgn {
+    flex: 1; /* Top half of the right section */
+    background-color: #e8e8e8; /* Optional: For visualization */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .webcam {
+    flex: 1; /* Bottom half of the right section */
+    background-color: #d8d8d8; /* Optional: For visualization */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
