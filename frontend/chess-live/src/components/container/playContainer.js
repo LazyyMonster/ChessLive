@@ -2,12 +2,7 @@ import React from "react";
 import './playContainer.css'
 import CustomChessboard from "../chessboard/chessboard";
 import ChessPGNBreadcrumbs from "../pgn/pgnArea";
-import CameraView from "../camera/camera";
-
-
-//chessboard
-//pgn
-//camera view
+import CameraView from "../camera/cameraView";
 
 
 export default function PlayContainer({ game, fen, cameraId }) {

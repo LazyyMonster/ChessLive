@@ -2,16 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Chess } from 'chess.js'
 import './App.css';
-import Button from '@mui/material/Button';
 import ResponsiveAppBar from "./components/navbar/navbar";
-import CustomChessboard from "./components/chessboard/chessboard";
-import CameraView from "./components/camera/camera";
-import './components/camera/camera.css'
 import WebcamImage from "./components/camera/webcamImage";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import ConfidenceInput from "./components/settings/modelConfidence/confidenceInput";
-import ChessPGNBreadcrumbs from './components/pgn/pgnArea'
 import PlayContainer from "./components/container/playContainer";
 
 
@@ -25,6 +19,8 @@ function App() {
   const [pgn, setPgn] = useState(`1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7`)
 
   const [cameraId, setCameraId] = useState(null);
+
+  const [detectedCorners, setDetectedCorners] = useState(null);
 
   // const [moves, setMoves] = useState(null);
   // game.move('e4');
@@ -89,6 +85,8 @@ function App() {
       <div className="content">
         <PlayContainer game={game} fen={fen} cameraId={cameraId}></PlayContainer>
       </div>
+
+      <WebcamImage></WebcamImage>
       
     </div>
   );

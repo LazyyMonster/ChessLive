@@ -7,8 +7,6 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import ChessRookIcon from '../icons/chessRookIcon.js';
 import SettingsIcon from '../icons/settingsIcon.js';
-import CameraList from '../cameraList/cameraList.js';
-
 
 
 const pages = ['Settings', 'Play'];
@@ -60,7 +58,6 @@ export default function ResponsiveAppBar({ setCameraId }) {
             
           <SettingsIcon></SettingsIcon>
 
-          {/* <CameraList setCameraId={setCameraId}></CameraList> */}
         </Toolbar>
       </Container>
     </AppBar>

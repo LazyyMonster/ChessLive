@@ -5,16 +5,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon
 import cv2
-
-from typing import List
+from typing import Dict, List
 
 from ultralytics import YOLO
 
 
 app = FastAPI()
 
-corner_model = YOLO("best_corners.pt")
-pieces_model = YOLO("best_pieces.pt")
+corner_model = YOLO("models/best_corners_mix.pt")
+pieces_model = YOLO("models/best_pieces_old.pt")
+
 
 allowed_origins = [
     "http://localhost",
@@ -28,18 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-def detect_corners(image, confidence):
-
-    results = corner_model.predict(source = image, conf = confidence)
-    detections = []
-
-    for result in results[0].boxes:
-        x, y, width, height = result.xyxy[0]
-        detections.append([float(x - (x - width) / 2), float(y - (y - height) / 2)])
-
-    return detections
 
 
 def detect_pieces(image, confidence):
@@ -293,46 +281,79 @@ def order_corners(pts):
 
     bottom_left, bottom_right = bottom_points[np.argsort(bottom_points[:, 0])]
 
-    rect = np.array([top_right, bottom_right, bottom_left, top_left])
+    rect = np.array([top_left, top_right, bottom_right, bottom_left])
 
     return rect
 
 
-# [[a1], [a8], [h8], [h1]]  a1 = [x, y]
-@app.post("/manual_corners/")
-async def manual_corners(corners: List[List[float]]):
-    
-    return {"corners": corners}
-
-
 @app.post("/fen_from_image/")
-async def fen_from_image(file: UploadFile, corner_conf: float, pieces_conf: float):
-
+async def fen_from_image(file: UploadFile, pieces_conf: float, corners: Dict[str, List[float]]):
     try:
+        ordered_corners = [
+            corners["A1"],
+            corners["A8"],
+            corners["H8"],
+            corners["H1"]
+        ]
+
         image_bytes = await file.read()
         image = np.frombuffer(image_bytes, dtype=np.uint8)
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-        corners = detect_corners(image, corner_conf)
-        num_corners = len(corners)
-
-        if num_corners != 4:
-            return {"error": f"Four corners are required to crop the chessboard. Detected {num_corners} corners."}
-        
-        corners = order_corners(corners)
-
-        transformed_image = cut_chessboard(image, corners)
+        transformed_image = cut_chessboard(image, ordered_corners)
 
         pieces, boxes = detect_pieces(transformed_image, pieces_conf)
         
         fen = make_fen(pieces, boxes, transformed_image)
-        # fen = ":)"
-        return fen
 
+        return {"fen": fen}
+
+    except KeyError as e:
+        return {"error": f"Missing corner: {str(e)}"}
     except Exception as e:
         return {"error": str(e)}
     
 
+@app.post("/detect_corners/")
+async def detect_corners(file: UploadFile, corner_conf: float):
+    # returns json with corners coordinates
+    # {
+    #   "corners": {
+    #     "A1": [2856, 265],
+    #     "A8": [3055, 1890],
+    #     "H8": [1131, 1903],
+    #     "H1": [1288, 266]
+    #   }
+    # }
+    image_bytes = await file.read()
+    image = np.frombuffer(image_bytes, dtype=np.uint8)
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    results = corner_model.predict(source=image, conf=corner_conf)
+    detections = []
+
+    for result in results[0].boxes:
+        if len(detections) < 4:
+            x, y, width, height = result.xywh[0]
+            detections.append([x, y])
+        else:
+            break
+
+    num_corners = len(detections)
+
+    if num_corners < 4:
+        return {"error": f"Four corners are required to crop the chessboard. Detected {num_corners} corners."}
+    
+    corners = order_corners(detections)
+
+    corner_names = ["A1", "A8", "H8", "H1"]
+    corners_with_names = {corner_names[i]: corners[i].tolist() for i in range(4)}
+
+    return {"corners": corners_with_names}
+
+    
+#TODO
+#check file extension and save
 @app.post("/corners_model_upload/")
 async def corners_model(file: UploadFile):
     corner_model = file
@@ -340,6 +361,8 @@ async def corners_model(file: UploadFile):
     return 1
 
 
+#TODO
+#check file extension and save
 @app.post("/pieces_model_upload/")
 async def pieces_model_upload(file: UploadFile):
     pieces_model = file
