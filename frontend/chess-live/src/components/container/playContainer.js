@@ -2,7 +2,7 @@ import React from "react";
 import './playContainer.css'
 import CustomChessboard from "../chessboard/chessboard";
 import ChessPGNBreadcrumbs from "../pgn/pgnArea";
-import CameraView from "../camera/cameraView";
+import DetectCorners from "../../backendAPI/detectCorners";
 
 
 export default function PlayContainer({ game, fen}) {
@@ -18,7 +18,7 @@ export default function PlayContainer({ game, fen}) {
         </div>
 
         <div className="webcam">
-          <CameraView></CameraView>
+          <DetectCorners></DetectCorners>
         </div>
       </div>
     </div>

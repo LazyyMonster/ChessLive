@@ -12,7 +12,7 @@ export default function WebcamImage() {
       imgElement.onload = () => {
         console.log(`Captured image size: ${imgElement.width}x${imgElement.height}`);
       };
-      imgElement.src = imageSrc; // Set the source to the captured base64 image
+      imgElement.src = imageSrc;
     }
     setImg(imageSrc);
   }, [webcamRef]);

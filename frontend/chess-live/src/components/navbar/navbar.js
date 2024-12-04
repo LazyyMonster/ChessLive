@@ -9,7 +9,7 @@ import ChessRookIcon from '../icons/chessRookIcon.js';
 import SettingsIcon from '../icons/settingsIcon.js';
 
 
-const pages = ['Settings', 'Play'];
+const pages = ['Follow game', 'Play on Lichess'];
 
 export default function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
