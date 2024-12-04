@@ -1,18 +1,25 @@
 import Webcam from "react-webcam";
 import React, { useState, useRef, useCallback } from "react";
 
-function WebcamImage() {
+export default function WebcamImage() {
   const webcamRef = useRef(null);
   const [img, setImg] = useState(null);
 
-const capture = useCallback(() => {
+  const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
+    if (imageSrc) {
+      const imgElement = new Image();
+      imgElement.onload = () => {
+        console.log(`Captured image size: ${imgElement.width}x${imgElement.height}`);
+      };
+      imgElement.src = imageSrc; // Set the source to the captured base64 image
+    }
     setImg(imageSrc);
   }, [webcamRef]);
 
   const videoConstraints = {
-    width: 800,
-    height: 640,
+    width: 4000,
+    height: 2250,
     facingMode: "environment",
   };
 
@@ -24,10 +31,7 @@ const capture = useCallback(() => {
             screenshotFormat="image/jpeg"
             videoConstraints={videoConstraints}
             audio={false}
-            height={640}
-            width={900}
             ref={webcamRef}
-            mirrored={true}
           />
           <button onClick={capture}>Capture photo</button>
         </>
@@ -40,5 +44,3 @@ const capture = useCallback(() => {
     </div>
   );
 }
-
-export default WebcamImage;

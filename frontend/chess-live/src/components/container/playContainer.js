@@ -5,7 +5,7 @@ import ChessPGNBreadcrumbs from "../pgn/pgnArea";
 import CameraView from "../camera/cameraView";
 
 
-export default function PlayContainer({ game, fen, cameraId }) {
+export default function PlayContainer({ game, fen}) {
   return (
     <div className="parent">
       <div className="left">
@@ -18,7 +18,7 @@ export default function PlayContainer({ game, fen, cameraId }) {
         </div>
 
         <div className="webcam">
-          <CameraView cameraId={cameraId}></CameraView>
+          <CameraView></CameraView>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import WebcamImage from "./components/camera/webcamImage";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import PlayContainer from "./components/container/playContainer";
+import DetectCorners from "./backendAPI/detectCorners";
 
 
 function App() {
@@ -17,8 +18,6 @@ function App() {
   const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
   const [error, setError] = useState(null);
   const [pgn, setPgn] = useState(`1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7`)
-
-  const [cameraId, setCameraId] = useState(null);
 
   const [detectedCorners, setDetectedCorners] = useState(null);
 
@@ -80,13 +79,13 @@ function App() {
 
   return (
     <div className="App">
-      <ResponsiveAppBar setCameraId={setCameraId}></ResponsiveAppBar>
-      <h1>Live Position</h1>
+      <ResponsiveAppBar></ResponsiveAppBar>
+      
       <div className="content">
-        <PlayContainer game={game} fen={fen} cameraId={cameraId}></PlayContainer>
+        <PlayContainer game={game} fen={fen}></PlayContainer>
       </div>
 
-      <WebcamImage></WebcamImage>
+      <DetectCorners></DetectCorners>
       
     </div>
   );

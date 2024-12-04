@@ -10,7 +10,9 @@ export default function ChessPGNBreadcrumbs({ moves }) {
   };
 
   return (
-    <Breadcrumbs className="pgnArea" aria-label="chess moves" separator="">
+    <>
+      <h1>PGN</h1>
+      <Breadcrumbs className="pgnArea" aria-label="chess moves" separator="">
       {moves.map((move, index) => (
         <Link
           key={index}
@@ -27,6 +29,8 @@ export default function ChessPGNBreadcrumbs({ moves }) {
             }
         </Link>
       ))}
-    </Breadcrumbs>
+      </Breadcrumbs>
+    </>
+   
   );
 }

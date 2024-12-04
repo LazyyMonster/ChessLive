@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from shapely.geometry import Polygon
 import cv2
 from typing import Dict, List
+from PIL import Image
+import io
 
 from ultralytics import YOLO
 
@@ -315,21 +317,18 @@ async def fen_from_image(file: UploadFile, pieces_conf: float, corners: Dict[str
     
 
 @app.post("/detect_corners/")
-async def detect_corners(file: UploadFile, corner_conf: float):
-    # returns json with corners coordinates
-    # {
-    #   "corners": {
-    #     "A1": [2856, 265],
-    #     "A8": [3055, 1890],
-    #     "H8": [1131, 1903],
-    #     "H1": [1288, 266]
-    #   }
-    # }
+async def detect_corners(file: UploadFile):
+    corner_conf = 0.1
     image_bytes = await file.read()
+
+    # # Debug: Print the size of the received image
+    # print(f"Received file size: {len(image_bytes)} bytes")
+
+
     image = np.frombuffer(image_bytes, dtype=np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-    results = corner_model.predict(source=image, conf=corner_conf)
+    results = corner_model.predict(source=image, conf=corner_conf, save=True)
     detections = []
 
     for result in results[0].boxes:
@@ -343,7 +342,6 @@ async def detect_corners(file: UploadFile, corner_conf: float):
 
     if num_corners < 4:
         return {"error": f"Four corners are required to crop the chessboard. Detected {num_corners} corners."}
-    
     corners = order_corners(detections)
 
     corner_names = ["A1", "A8", "H8", "H1"]
@@ -368,3 +366,9 @@ async def pieces_model_upload(file: UploadFile):
     pieces_model = file
 
     return 1
+
+
+
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile):
+    return {"filename": file.filename}

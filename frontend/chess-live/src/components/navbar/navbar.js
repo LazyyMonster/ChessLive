@@ -11,7 +11,7 @@ import SettingsIcon from '../icons/settingsIcon.js';
 
 const pages = ['Settings', 'Play'];
 
-export default function ResponsiveAppBar({ setCameraId }) {
+export default function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
