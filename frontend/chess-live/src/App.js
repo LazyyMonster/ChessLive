@@ -7,6 +7,7 @@ import WebcamImage from "./components/camera/webcamImage";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import PlayContainer from "./components/container/playContainer";
+import { CaptureProvider } from './backendAPI/captureContext';
 
 
 function App() {
@@ -78,11 +79,13 @@ function App() {
 
   return (
     <div className="App">
-      <ResponsiveAppBar></ResponsiveAppBar>
-      
-      <div className="content">
-        <PlayContainer game={game} fen={fen}></PlayContainer>
-      </div>
+      <CaptureProvider>
+        <ResponsiveAppBar></ResponsiveAppBar>
+        
+        <div className="content">
+          <PlayContainer game={game} fen={fen}></PlayContainer>
+        </div>
+    </CaptureProvider>
       
     </div>
   );
