@@ -317,11 +317,10 @@ async def fen_from_image(file: UploadFile, pieces_conf: float, corners: Dict[str
     
 
 @app.post("/detect_corners/")
-async def detect_corners(file: UploadFile):
-    corner_conf = 0.2
+async def detect_corners(file: UploadFile, corner_conf: float):
+    
     image_bytes = await file.read()
 
-    # # Debug: Print the size of the received image
     # print(f"Received file size: {len(image_bytes)} bytes")
 
 

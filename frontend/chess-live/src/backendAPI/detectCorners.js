@@ -53,7 +53,7 @@ export default function DetectCorners() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const url = `http://127.0.0.1:8000/detect_corners/`;
+      const url = `http://127.0.0.1:8000/detect_corners/?corner_conf=${cornerConf}`;
       const response = await axios.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
