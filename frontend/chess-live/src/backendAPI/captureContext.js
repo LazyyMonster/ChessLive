@@ -3,7 +3,7 @@ import Webcam from "react-webcam";
 
 const CaptureContext = createContext();
 
-export function CaptureProvider({ children}) {
+export function CaptureProvider({ children }) {
 
     let webcamRef = null;
 
@@ -16,7 +16,7 @@ export function CaptureProvider({ children}) {
         if (!webcamRef || !webcamRef.current) {
             console.error("Webcam reference is not set. Capture aborted.");
             return null;
-          }
+        }
 
         const imageSrc = webcamRef.current.getScreenshot({ width: 3840, height: 2160 });
         if (imageSrc) {

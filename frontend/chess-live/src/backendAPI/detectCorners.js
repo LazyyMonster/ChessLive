@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import { useCapture } from './captureContext';
-
+import CanvasOverlay from '../components/camera/canvasOverlay'
 
 export default function DetectCorners() {
   const webcamRef = useRef(null);
@@ -10,7 +10,14 @@ export default function DetectCorners() {
   const [error, setError] = useState(null);
   const [cornerConf, setCornerConf] = useState(0.5);
 
-  const { capture, setWebcamRef } = useCapture()
+  const { capture, setWebcamRef } = useCapture();
+  const [corners, setCorners] = useState([]);
+
+  const capturedImageWidth = 3840;
+  const capturedImageHeight = 2160;
+
+  const videoWidth = 1920;
+  const videoHeight = 1080;
 
   React.useEffect(() => {
     console.log("Setting webcamRef in context...");
@@ -25,7 +32,6 @@ export default function DetectCorners() {
     }
   };
 
-
   const sendReq = useCallback(async (imageSrc) => {
     try {
 
@@ -34,7 +40,6 @@ export default function DetectCorners() {
         return;
       }
 
-      // Convert base64 to Blob
       const base64Data = imageSrc.split(",")[1];
       const binary = atob(base64Data);
       const array = [];
@@ -43,7 +48,6 @@ export default function DetectCorners() {
       }
       const blob = new Blob([new Uint8Array(array)], { type: "image/jpeg" });
 
-      // Create a File from Blob
       const file = new File([blob], "captured_image.jpg", { type: "image/jpeg" });
 
       const formData = new FormData();
@@ -57,6 +61,7 @@ export default function DetectCorners() {
       });
 
       setResponse(response.data);
+      setCorners(response.data.corners || []);
       setError(null);
       console.log(response);
     } catch (err) {
@@ -66,29 +71,40 @@ export default function DetectCorners() {
   }, []);
 
   return (
-    <div>
-      <Webcam
-        ref={webcamRef}
-        screenshotQuality={1} 
-        screenshotFormat="image/jpeg"
-        videoConstraints={{
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-          facingMode: "environment",
-        }}
-        disablePictureInPicture={true}
-        style={{
-          maxWidth: "100%",
-          maxHeight: "100%"
-        }}
-      />
-
+    <>
       <button onClick={handleCapture}>Detect Corners</button>
-      {/* 
+
+      <div style={{
+        position: "relative"
+      }}>
+
+        <Webcam
+          ref={webcamRef}
+          screenshotQuality={1}
+          screenshotFormat="image/jpeg"
+          videoConstraints={{
+            width: { ideal: videoWidth },
+            height: { ideal: videoHeight },
+            facingMode: "environment",
+          }}
+          disablePictureInPicture={true}
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%"
+          }}
+        />
+        <CanvasOverlay
+          corners={corners}
+          videoWidth={videoWidth}
+          videoHeight={videoHeight}
+          capturedImageWidth={capturedImageWidth}
+          capturedImageHeight={capturedImageHeight}
+        />
+
+        {/* 
       {error && <div className="error">{error}</div>}
-
       {response && <pre>{JSON.stringify(response, null, 2)}</pre>} */}
-
-    </div>
+      </div>
+    </>
   );
 }

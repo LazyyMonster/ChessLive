@@ -5,7 +5,7 @@ import ChessPGNBreadcrumbs from "../pgn/pgnArea";
 import DetectCorners from "../../backendAPI/detectCorners";
 
 
-export default function PlayContainer({ game, fen}) {
+export default function PlayContainer({ game, fen }) {
   return (
     <div className="parent">
       <div className="left">
