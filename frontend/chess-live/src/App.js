@@ -3,7 +3,8 @@ import { Chess } from 'chess.js'
 import './App.css';
 import ResponsiveAppBar from "./components/navbar/navbar";
 import PlayContainer from "./components/container/playContainer";
-import { CaptureProvider } from './backendAPI/captureContext';
+import { CaptureProvider } from './components/camera/captureContext';
+import DetectPieces from "./backendAPI/detectPieces";
 
 
 function App() {
@@ -35,7 +36,16 @@ function App() {
       <CaptureProvider>
         <ResponsiveAppBar></ResponsiveAppBar>
         <div className="content">
-          <PlayContainer game={game} fen={fen}></PlayContainer>
+          <PlayContainer
+            game={game}
+            fen={fen}
+            detectedCorners={detectedCorners}
+            setDetectedCorners={setDetectedCorners}
+          />
+          <DetectPieces
+            corners={detectedCorners}
+            setFen={setFen}
+          ></DetectPieces>
         </div>
     </CaptureProvider>
     </div>

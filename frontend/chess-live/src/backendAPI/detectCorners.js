@@ -1,10 +1,10 @@
 import React, { useState, useRef, useCallback } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
-import { useCapture } from './captureContext';
+import { useCapture } from '../components/camera/captureContext';
 import CanvasOverlay from '../components/camera/canvasOverlay'
 
-export default function DetectCorners() {
+export default function DetectCorners({ setDetectedCorners }) {
   const webcamRef = useRef(null);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
@@ -15,7 +15,6 @@ export default function DetectCorners() {
 
   const capturedImageWidth = 3840;
   const capturedImageHeight = 2160;
-
   const videoWidth = 1920;
   const videoHeight = 1080;
 
@@ -60,15 +59,22 @@ export default function DetectCorners() {
         },
       });
 
+      const detectedCorners = response.data.corners || [];
       setResponse(response.data);
       setCorners(response.data.corners || []);
       setError(null);
-      console.log(response);
+      // console.log(response);
+      // console.log(detectedCorners);
+
+      console.log("Detected corners in DetectCorners:", detectedCorners);
+      setDetectedCorners(detectedCorners);
+      setDetectedCorners(detectedCorners);
+      
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred while processing the image.");
       setResponse(null);
     }
-  }, []);
+  }, [cornerConf]);
 
   return (
     <>

@@ -5,7 +5,13 @@ import ChessPGNBreadcrumbs from "../pgn/pgnArea";
 import DetectCorners from "../../backendAPI/detectCorners";
 
 
-export default function PlayContainer({ game, fen }) {
+export default function PlayContainer({ game, fen, detectedCorners, setDetectedCorners }) {
+
+  React.useEffect(() => {
+    console.log("Detected corners passed to PlayContainer:", detectedCorners);
+  }, [detectedCorners]);
+
+  
   return (
     <div className="parent">
       <div className="left">
@@ -18,7 +24,9 @@ export default function PlayContainer({ game, fen }) {
         </div>
 
         <div className="webcam">
-          <DetectCorners></DetectCorners>
+          <DetectCorners
+            setDetectedCorners={setDetectedCorners}
+          ></DetectCorners>
         </div>
       </div>
     </div>

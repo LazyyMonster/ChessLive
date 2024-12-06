@@ -1,5 +1,8 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, HTTPException, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+
+from pydantic import BaseModel
+import json
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,6 +13,11 @@ from PIL import Image
 import io
 
 from ultralytics import YOLO
+
+
+class CornersBody(BaseModel):
+    corners: Dict[str, List[float]]
+    pieces_conf: float
 
 
 app = FastAPI()
@@ -34,7 +42,7 @@ app.add_middleware(
 
 def detect_pieces(image, confidence):
 
-    results = pieces_model.predict(source = image, conf = confidence)
+    results = pieces_model.predict(source = image, conf = confidence, save=True)
     detections = []
 
     boxes = results[0].boxes
@@ -289,14 +297,28 @@ def order_corners(pts):
 
 
 @app.post("/fen_from_image/")
-async def fen_from_image(file: UploadFile, pieces_conf: float, corners: Dict[str, List[float]]):
+async def fen_from_image(
+    file: UploadFile = File(...),
+    data: str = Form(...)
+):
     try:
+        parsed_data = json.loads(data)
+
+        corners = parsed_data.get("corners")
+        if not corners:
+            raise HTTPException(status_code=400, detail="Missing 'corners' in data.")
+        
+        pieces_conf = parsed_data.get("pieces_conf")
+        if pieces_conf is None:
+            raise HTTPException(status_code=400, detail="Missing 'pieces_conf' in data.")
+        
         ordered_corners = [
             corners["A1"],
             corners["A8"],
             corners["H8"],
             corners["H1"]
         ]
+        print(f"Ordered Corners: {ordered_corners}")
 
         image_bytes = await file.read()
         image = np.frombuffer(image_bytes, dtype=np.uint8)
@@ -305,15 +327,17 @@ async def fen_from_image(file: UploadFile, pieces_conf: float, corners: Dict[str
         transformed_image = cut_chessboard(image, ordered_corners)
 
         pieces, boxes = detect_pieces(transformed_image, pieces_conf)
-        
+
         fen = make_fen(pieces, boxes, transformed_image)
 
         return {"fen": fen}
 
     except KeyError as e:
-        return {"error": f"Missing corner: {str(e)}"}
+        raise HTTPException(status_code=400, detail=f"Missing corner: {str(e)}")
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON in 'data': {str(e)}")
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
     
 
 @app.post("/detect_corners/")
@@ -322,7 +346,6 @@ async def detect_corners(file: UploadFile, corner_conf: float):
     image_bytes = await file.read()
 
     # print(f"Received file size: {len(image_bytes)} bytes")
-
 
     image = np.frombuffer(image_bytes, dtype=np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
