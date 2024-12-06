@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { Chess } from 'chess.js'
 import './App.css';
 import ResponsiveAppBar from "./components/navbar/navbar";
-import PlayContainer from "./components/container/playContainer";
+import PlayContainer from "./components/mainContent/playContainer";
 import { CaptureProvider } from './components/camera/captureContext';
 import DetectPieces from "./backendAPI/detectPieces";
 
 
 function App() {
-  const [selectedFile, setSelectedFile] = useState(null);
   const [cornerConf, setCornerConf] = useState(0.6);
   const [piecesConf, setPiecesConf] = useState(0.6);
   const [game, setGame] = useState(new Chess());
@@ -45,7 +44,7 @@ function App() {
           <DetectPieces
             corners={detectedCorners}
             setFen={setFen}
-          ></DetectPieces>
+          />
         </div>
     </CaptureProvider>
     </div>

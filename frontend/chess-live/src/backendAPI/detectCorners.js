@@ -47,7 +47,7 @@ export default function DetectCorners({ setDetectedCorners }) {
       }
       const blob = new Blob([new Uint8Array(array)], { type: "image/jpeg" });
 
-      const file = new File([blob], "captured_image.jpg", { type: "image/jpeg" });
+      const file = new File([blob], "detect_corners.jpg", { type: "image/jpeg" });
 
       const formData = new FormData();
       formData.append("file", file);
@@ -69,7 +69,7 @@ export default function DetectCorners({ setDetectedCorners }) {
       console.log("Detected corners in DetectCorners:", detectedCorners);
       setDetectedCorners(detectedCorners);
       setDetectedCorners(detectedCorners);
-      
+
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred while processing the image.");
       setResponse(null);
@@ -77,8 +77,7 @@ export default function DetectCorners({ setDetectedCorners }) {
   }, [cornerConf]);
 
   return (
-    <>
-      <button onClick={handleCapture}>Detect Corners</button>
+    <div style={{flexDirection: "column"}}>
 
       <div style={{
         position: "relative"
@@ -111,6 +110,17 @@ export default function DetectCorners({ setDetectedCorners }) {
       {error && <div className="error">{error}</div>}
       {response && <pre>{JSON.stringify(response, null, 2)}</pre>} */}
       </div>
-    </>
+
+      <button
+        onClick={handleCapture}
+        style={{
+          marginTop: "10px", // Adds spacing between the div and the button
+          display: "block", // Ensures the button appears below as a block element
+          margin: "0 auto", // Centers the button horizontally
+        }}
+      >
+        Detect Corners
+      </button>
+    </div>
   );
 }

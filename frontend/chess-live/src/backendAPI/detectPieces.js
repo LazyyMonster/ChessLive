@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useCapture } from '../components/camera/captureContext';
-import React, { useState} from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 
 export default function DetectPieces({ corners, setFen }) {
@@ -12,11 +12,24 @@ export default function DetectPieces({ corners, setFen }) {
     const {capture, setWebcamRef} = useCapture();
 
 
-    const handleCapture = () => {
+    const [isCapturing, setIsCapturing] = useState(false);
+    const intervalRef = useRef(null);
 
-        const image = capture();
-        if (image) {
-            sendReq(image);
+    const handleCapture = () => {
+        if (isCapturing) {
+            // Stop capturing
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            setIsCapturing(false);
+        } else {
+            // Start capturing
+            setIsCapturing(true);
+            intervalRef.current = setInterval(() => {
+                const image = capture();
+                if (image) {
+                    sendReq(image);
+                }
+            }, 1000);
         }
     };
 
@@ -27,7 +40,7 @@ export default function DetectPieces({ corners, setFen }) {
         }
     
         const blob = await (await fetch(imageSrc)).blob();
-        const file = new File([blob], "chessboard.jpg", { type: blob.type });
+        const file = new File([blob], "detect_pieces.jpg", { type: blob.type });
     
         const formData = new FormData();
         formData.append("file", file);
