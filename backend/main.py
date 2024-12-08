@@ -22,8 +22,8 @@ class CornersBody(BaseModel):
 
 app = FastAPI()
 
-corner_model = YOLO("models/best_corners_mix.pt")
-pieces_model = YOLO("models/best_pieces_old.pt")
+corner_model = YOLO("models/best_corners.pt")
+pieces_model = YOLO("models/best_pieces.pt")
 
 
 allowed_origins = [
@@ -91,10 +91,10 @@ def calculateIoU(box1, box2):
 
 def connect_detection_to_square(detections, boxes, square):
     
-    pieceLetter = {0: 'P', 1: 'B', 2: 'N',
-      3: 'R', 4: 'Q', 5: 'K', 
-      6: 'p', 7: 'b', 8: 'n',
-      9: 'r', 10: 'q', 11: 'k'}
+    pieceLetter = {0: 'P', 1: 'R', 2: 'N',
+      3: 'B', 4: 'Q', 5: 'K', 
+      6: 'p', 7: 'r', 8: 'n',
+      9: 'b', 10: 'k', 11: 'q'}
 
     list_of_iou=[]
     
