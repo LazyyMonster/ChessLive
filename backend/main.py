@@ -9,8 +9,6 @@ import matplotlib.pyplot as plt
 from shapely.geometry import Polygon
 import cv2
 from typing import Dict, List
-from PIL import Image
-import io
 
 from ultralytics import YOLO
 
@@ -255,8 +253,12 @@ def make_fen(pieces, boxes, image):
 
 
 def cut_chessboard(image: np.ndarray, corners: List[List[float]]) -> np.ndarray:
-
     corners = np.array(corners, dtype="float32")
+    if image is None or image.size == 0:
+        raise ValueError("Input image is empty or invalid.")
+    if len(corners) != 4:
+        raise ValueError("Corners must contain exactly 4 points.")
+
     (a1, a8, h8, h1) = corners
 
     widthA = np.sqrt(((h8[0] - a1[0]) ** 2) + ((h1[1] - a1[1]) ** 2))
@@ -273,9 +275,12 @@ def cut_chessboard(image: np.ndarray, corners: List[List[float]]) -> np.ndarray:
         [maxWidth - 1, maxHeight - 1],
         [0, maxHeight - 1]], dtype="float32")
 
+    print(f"Source corners: {corners}")
+    print(f"Destination corners: {dst}")
+    print(f"Image shape: {image.shape}")
+
     M = cv2.getPerspectiveTransform(corners, dst)
     warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
-
     return warped
 
 
@@ -291,7 +296,8 @@ def order_corners(pts):
 
     bottom_left, bottom_right = bottom_points[np.argsort(bottom_points[:, 0])]
 
-    rect = np.array([top_left, top_right, bottom_right, bottom_left])
+    # rect = np.array([top_left, top_right, bottom_right, bottom_left])
+    rect = np.array([top_right, bottom_right, bottom_left, top_left])
 
     return rect
 
@@ -319,6 +325,7 @@ async def fen_from_image(
             corners["H1"]
         ]
         print(f"Ordered Corners: {ordered_corners}")
+        print(file.size)
 
         image_bytes = await file.read()
         image = np.frombuffer(image_bytes, dtype=np.uint8)

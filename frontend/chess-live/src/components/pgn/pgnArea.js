@@ -1,18 +1,25 @@
 import React from "react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
+import { useChess } from '../../chessLogic/chessGame';
 
 
-export default function ChessPGNBreadcrumbs({ moves }) {
+export default function ChessPGNBreadcrumbs() {
+
+  const { getPgn } = useChess();
 
   const handleMoveClick = (move, index) => {
     console.log(`Move ${index + 1}: ${move}`);
   };
 
+  const moves = getPgn().split(" ").filter(Boolean); // Filter out any empty strings
+
+
   return (
     <>
       <h1>PGN</h1>
       <Breadcrumbs className="pgnArea" aria-label="chess moves" separator="">
+      
       {moves.map((move, index) => (
         <Link
           key={index}

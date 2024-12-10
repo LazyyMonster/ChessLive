@@ -3,24 +3,25 @@ import './playContainer.css'
 import CustomChessboard from "../chessboard/chessboard";
 import ChessPGNBreadcrumbs from "../pgn/pgnArea";
 import DetectCorners from "../../backendAPI/detectCorners";
+import { useChess } from "../../chessLogic/chessGame";
 
 
 export default function PlayContainer({ game, fen, detectedCorners, setDetectedCorners }) {
 
-  React.useEffect(() => {
-    console.log("Detected corners passed to PlayContainer:", detectedCorners);
-  }, [detectedCorners]);
+  // React.useEffect(() => {
+  //   console.log("Detected corners passed to PlayContainer:", detectedCorners);
+  // }, [detectedCorners]);
 
   
   return (
     <div className="parent">
       <div className="left">
-        <CustomChessboard fen={fen}></CustomChessboard>
+        <CustomChessboard></CustomChessboard>
       </div>
 
       <div className="right">
         <div className="pgn">
-          <ChessPGNBreadcrumbs moves={game.history()} />
+          <ChessPGNBreadcrumbs/>
         </div>
 
         <div className="webcam">

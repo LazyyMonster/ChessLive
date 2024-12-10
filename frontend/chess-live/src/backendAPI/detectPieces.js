@@ -1,57 +1,38 @@
 import axios from "axios";
-import { useCapture } from '../components/camera/captureContext';
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import { useSettings } from "../components/settings/settings";
+import { useChess } from "../chessLogic/chessGame";
 
-
-export default function DetectPieces({ corners, setFen }) {
-
-    const [response, setResponse] = useState(null);
+export default function DetectPieces({ image }) {
+    const { detectedCorners, piecesConf } = useSettings();
     const [error, setError] = useState(null);
-    const [piecesConf, setPiecesConf] = useState(0.5);
+    const { makeMove, findMove } = useChess();
 
-    const {capture, setWebcamRef} = useCapture();
-
-
-    const [isCapturing, setIsCapturing] = useState(false);
-    const intervalRef = useRef(null);
-
-    const handleCapture = () => {
-        if (isCapturing) {
-            // Stop capturing
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-            setIsCapturing(false);
-        } else {
-            // Start capturing
-            setIsCapturing(true);
-            intervalRef.current = setInterval(() => {
-                const image = capture();
-                if (image) {
-                    sendReq(image);
-                }
-            }, 1000);
+    useEffect(() => {
+        if (image) {
+            sendReq(image);
         }
-    };
+    }, [image]);
 
-    const sendReq = async (imageSrc) => {
-        if (!imageSrc) {
-            setError("Please select a file before submitting.");
+    const sendReq = async (image) => {
+        if (!image) {
+            setError("No image available for detection.");
             return;
         }
-    
-        const blob = await (await fetch(imageSrc)).blob();
-        const file = new File([blob], "detect_pieces.jpg", { type: blob.type });
-    
-        const formData = new FormData();
-        formData.append("file", file);
-    
-        const body = {
-            corners: corners,
-            pieces_conf: piecesConf,
-        };
-        formData.append("data", JSON.stringify(body));
-    
+
         try {
+            const blob = await (await fetch(image)).blob();
+            const file = new File([blob], "detect_pieces.jpg", { type: blob.type });
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const body = {
+                corners: detectedCorners,
+                pieces_conf: piecesConf,
+            };
+            formData.append("data", JSON.stringify(body));
+            console.log(piecesConf);
             const response = await axios.post(
                 `http://127.0.0.1:8000/fen_from_image/`,
                 formData,
@@ -61,18 +42,22 @@ export default function DetectPieces({ corners, setFen }) {
                     },
                 }
             );
-    
-            console.log("Server Response:", response.data);
-            setFen(response.data.fen);
+
+            const fenDetected = response.data.fen;
+            console.log(fenDetected);
             setError(null);
+
+            const detectedMove = findMove(fenDetected);
+            if (detectedMove) {
+                makeMove(detectedMove);
+            } else {
+                console.error("No valid move found.");
+            }
         } catch (err) {
             console.error("Error:", err.response?.data || err.message);
-            setError(err.response?.data?.detail || "An error occurred while fetching FEN.");
-            setFen(null);
+            setError(err.response?.data?.detail || "An error occurred while detecting pieces.");
         }
     };
- 
-    return (
-        <button onClick={handleCapture}>Detect Pieces</button>
-    );
+
+    return error ? <p className="error">{error}</p> : null;
 }

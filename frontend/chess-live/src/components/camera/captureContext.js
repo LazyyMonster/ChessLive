@@ -1,24 +1,27 @@
-import React, { createContext, useRef, useCallback, useContext } from "react";
-import Webcam from "react-webcam";
+import React, { createContext, useCallback, useRef, useContext } from "react";
+import { CAPTURED_IMAGE_WIDTH, CAPTURED_IMAGE_HEIGHT } from '../settings/constants';
 
 const CaptureContext = createContext();
 
 export function CaptureProvider({ children }) {
-
-    let webcamRef = null;
+    // Use useRef to manage the webcam reference
+    const webcamRef = useRef(null);
 
     const setWebcamRef = (ref) => {
-        webcamRef = ref;
+        webcamRef.current = ref; // Persist the reference using useRef
     };
 
     const capture = useCallback(() => {
-
-        if (!webcamRef || !webcamRef.current) {
+        if (!webcamRef.current) {
             console.error("Webcam reference is not set. Capture aborted.");
             return null;
         }
 
-        const imageSrc = webcamRef.current.getScreenshot({ width: 3840, height: 2160 });
+        // Capture image using the webcam reference
+        const imageSrc = webcamRef.current.getScreenshot({ 
+            width: CAPTURED_IMAGE_WIDTH, 
+            height: CAPTURED_IMAGE_HEIGHT 
+        });
         if (imageSrc) {
             const imgElement = new Image();
             imgElement.onload = () => {
@@ -31,7 +34,7 @@ export function CaptureProvider({ children }) {
     }, [webcamRef]);
 
     return (
-        <CaptureContext.Provider value={{ capture, setWebcamRef }}>
+        <CaptureContext.Provider value={{ capture, setWebcamRef, webcamRef }}>
             {children}
         </CaptureContext.Provider>
     );

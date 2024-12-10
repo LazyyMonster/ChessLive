@@ -1,13 +1,10 @@
 import React, { useEffect, useRef } from "react";
+import { VIDEO_WIDTH, VIDEO_HEIGHT, CAPTURED_IMAGE_WIDTH, CAPTURED_IMAGE_HEIGHT } from '../settings/constants';
+import { useSettings } from '../settings/settings';
 
-export default function CanvasOverlay({
-    corners,
-    videoWidth,
-    videoHeight,
-    capturedImageWidth,
-    capturedImageHeight,
-}) {
+export default function CanvasOverlay() {
     const canvasRef = useRef(null);
+    const { detectedCorners } = useSettings();
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -17,11 +14,11 @@ export default function CanvasOverlay({
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (corners) {
-            const scaleX = videoWidth / capturedImageWidth;
-            const scaleY = videoHeight / capturedImageHeight;
+        if (detectedCorners) {
+            const scaleX = VIDEO_WIDTH / CAPTURED_IMAGE_WIDTH;
+            const scaleY = VIDEO_HEIGHT / CAPTURED_IMAGE_HEIGHT;
 
-            const scaledCorners = Object.values(corners).map(([x, y]) => ({
+            const scaledCorners = Object.values(detectedCorners).map(([x, y]) => ({
                 x: x * scaleX,
                 y: y * scaleY,
             }));
@@ -47,13 +44,13 @@ export default function CanvasOverlay({
                 ctx.fill();
             });
         }
-    }, [corners, videoWidth, videoHeight, capturedImageWidth, capturedImageHeight]);
+    }, [detectedCorners]);
 
     return (
         <canvas
             ref={canvasRef}
-            width={videoWidth}
-            height={videoHeight}
+            width={VIDEO_WIDTH}
+            height={VIDEO_HEIGHT}
             style={{
                 position: "absolute",
                 top: 0,
