@@ -21,7 +21,7 @@ class CornersBody(BaseModel):
 app = FastAPI()
 
 corner_model = YOLO("models/best_corners.pt")
-pieces_model = YOLO("models/best_pieces.pt")
+pieces_model = YOLO("models/best_pieces_real_plus_synth.pt")
 
 
 allowed_origins = [
@@ -134,6 +134,7 @@ def make_fen(pieces, boxes, image):
     import numpy as np
 
     ptsT, ptsL = make_grid(image)
+    print(ptsT, ptsL)
 
     x_coords = [ptsT[i][0] for i in range(9)]
     y_coords = [ptsL[i][1] for i in range(9)]

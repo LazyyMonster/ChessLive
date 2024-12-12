@@ -3,6 +3,8 @@ import { Chessboard } from "react-chessboard";
 import { useChess } from "../../chessLogic/chessGame";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import UpdateGame from "../../backendAPI/updateGame";
+
 
 export default function CustomChessboard() {
   const {
@@ -32,7 +34,7 @@ export default function CustomChessboard() {
 
   return (
     <div className="CustomBoard">
-      <h1>Live Position</h1>
+      <h1>{analysisMode ? "Analysis Mode" : "Live Position"}</h1>
       <Chessboard position={fen} boardWidth={500} />
       <Stack direction="row" spacing={2} sx={{ marginTop: "16px" }}>
         <Button
@@ -41,6 +43,7 @@ export default function CustomChessboard() {
         >
           {analysisMode ? "Return To Live Mode" : "Enable Analysis Mode"}
         </Button>
+        {!analysisMode && <UpdateGame />}
         {analysisMode && (
           <>
             <Button
