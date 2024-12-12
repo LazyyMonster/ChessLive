@@ -6,13 +6,12 @@ import { useSettings } from "../components/settings/settings";
 import CameraView from "../components/camera/cameraView";
 
 export default function DetectCorners() {
-  const { capture, setWebcamRef } = useCapture(); // Capture context
-  const { cornerConf, setDetectedCorners } = useSettings(); // Settings context
+  const { capture, setWebcamRef } = useCapture();
+  const { cornerConf, setDetectedCorners } = useSettings();
   const [error, setError] = useState(null);
 
   const handleCapture = () => {
-    console.log("handleCapture called. webcamRef:", setWebcamRef);
-    const image = capture(); // Capture image from webcam
+    const image = capture();
     if (image) {
       sendReq(image);
     }
@@ -26,7 +25,6 @@ export default function DetectCorners() {
           return;
         }
 
-        // Convert base64 image to a blob
         const base64Data = imageSrc.split(",")[1];
         const binary = atob(base64Data);
         const array = [];
@@ -55,7 +53,7 @@ export default function DetectCorners() {
       } catch (err) {
         setError(
           err.response?.data?.error ||
-            "An error occurred while processing the image."
+          "An error occurred while processing the image."
         );
       }
     },
@@ -65,7 +63,6 @@ export default function DetectCorners() {
   return (
     <div style={{ flexDirection: "column" }}>
       <div style={{ position: "relative" }}>
-        {/* Pass setWebcamRef to CameraView */}
         <CameraView ref={setWebcamRef} />
         <CanvasOverlay />
       </div>

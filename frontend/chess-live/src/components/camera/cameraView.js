@@ -4,7 +4,7 @@ import { VIDEO_WIDTH, VIDEO_HEIGHT } from "../settings/constants";
 import { useCapture } from "./captureContext";
 
 const CameraView = forwardRef((props, ref) => {
-  const { setWebcamRef } = useCapture(); // Access the context function to set the webcam reference
+  const { setWebcamRef } = useCapture();
 
   const videoConstraints = {
     width: { ideal: VIDEO_WIDTH },
@@ -16,8 +16,8 @@ const CameraView = forwardRef((props, ref) => {
     <Webcam
       audio={false}
       ref={(webcamInstance) => {
-        setWebcamRef(webcamInstance); // Pass the ref to the context function
-        if (ref) ref.current = webcamInstance; // Handle forwarded ref, if provided
+        setWebcamRef(webcamInstance);
+        if (ref) ref.current = webcamInstance;
       }}
       screenshotQuality={1}
       screenshotFormat="image/jpeg"
@@ -27,7 +27,7 @@ const CameraView = forwardRef((props, ref) => {
         maxWidth: "100%",
         maxHeight: "100%",
       }}
-      {...props} // Pass through any additional props
+      {...props}
     />
   );
 });

@@ -32,7 +32,6 @@ export default function DetectPieces({ image }) {
                 pieces_conf: piecesConf,
             };
             formData.append("data", JSON.stringify(body));
-            console.log(piecesConf);
             const response = await axios.post(
                 `http://127.0.0.1:8000/fen_from_image/`,
                 formData,
@@ -49,6 +48,7 @@ export default function DetectPieces({ image }) {
 
             const detectedMove = findMove(fenDetected);
             if (detectedMove) {
+                console.log(detectedMove);
                 makeMove(detectedMove);
             } else {
                 console.error("No valid move found.");

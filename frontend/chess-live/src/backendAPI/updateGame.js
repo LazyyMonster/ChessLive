@@ -5,7 +5,7 @@ import DetectPieces from "./detectPieces";
 export default function UpdateGame() {
     const { capture } = useCapture();
     const [isCapturing, setIsCapturing] = useState(false);
-    const [capturedImage, setCapturedImage] = useState(null); // State for storing the captured image
+    const [capturedImage, setCapturedImage] = useState(null);
     const intervalRef = useRef(null);
 
     const handleCapture = () => {
@@ -18,10 +18,9 @@ export default function UpdateGame() {
             intervalRef.current = setInterval(() => {
                 const image = capture();
                 if (image) {
-                    console.log("Captured Image:", image);
-                    setCapturedImage(image); // Update state with the captured image
+                    setCapturedImage(image);
                 }
-            }, 1000);
+            }, 3000);
         }
     };
 
@@ -30,7 +29,6 @@ export default function UpdateGame() {
             <button onClick={handleCapture}>
                 {isCapturing ? "Stop Detection" : "Start Detection"}
             </button>
-            {/* Pass the captured image to DetectPieces */}
             {capturedImage && <DetectPieces image={capturedImage} />}
         </div>
     );

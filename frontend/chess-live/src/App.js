@@ -14,21 +14,17 @@ function App() {
   return (
     <div className="App">
       <SettingsProvider>
-      <CaptureProvider>
-      <ChessProvider>
-        <ResponsiveAppBar></ResponsiveAppBar>
-        
-        
-          <div className="content">
-            <PlayContainer/>
-          </div>
-        
-        
-        <ConfidenceInput></ConfidenceInput>
-        <UpdateGame />
-        </ChessProvider>
+        <CaptureProvider>
+          <ChessProvider>
+            <ResponsiveAppBar></ResponsiveAppBar>
+            <div className="content">
+              <PlayContainer/>
+            </div>
+            <ConfidenceInput></ConfidenceInput>
+            <UpdateGame />
+          </ChessProvider>
         </CaptureProvider>
-      </SettingsProvider> 
+      </SettingsProvider>
     </div>
   );
 }

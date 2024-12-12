@@ -12,7 +12,7 @@ export default function ConfidenceInput() {
           Corner Confidence:
           <input
             type="number"
-            value={cornerConf || 0.5} // Ensure a fallback value
+            value={cornerConf || 0.5}
             onChange={(e) => {
               const value = parseFloat(e.target.value);
               if (!isNaN(value) && value >= 0 && value <= 1) setCornerConf(value);
@@ -28,7 +28,7 @@ export default function ConfidenceInput() {
           Pieces Confidence:
           <input
             type="number"
-            value={piecesConf || 0.5} // Ensure a fallback value
+            value={piecesConf || 0.5}
             onChange={(e) => {
               const value = parseFloat(e.target.value);
               if (!isNaN(value) && value >= 0 && value <= 1) setPiecesConf(value);

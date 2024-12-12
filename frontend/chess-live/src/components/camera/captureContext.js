@@ -4,11 +4,10 @@ import { CAPTURED_IMAGE_WIDTH, CAPTURED_IMAGE_HEIGHT } from '../settings/constan
 const CaptureContext = createContext();
 
 export function CaptureProvider({ children }) {
-    // Use useRef to manage the webcam reference
     const webcamRef = useRef(null);
 
     const setWebcamRef = (ref) => {
-        webcamRef.current = ref; // Persist the reference using useRef
+        webcamRef.current = ref;
     };
 
     const capture = useCallback(() => {
@@ -17,7 +16,6 @@ export function CaptureProvider({ children }) {
             return null;
         }
 
-        // Capture image using the webcam reference
         const imageSrc = webcamRef.current.getScreenshot({ 
             width: CAPTURED_IMAGE_WIDTH, 
             height: CAPTURED_IMAGE_HEIGHT 
