@@ -4,7 +4,7 @@ import DetectPieces from "./detectPieces";
 import Button from "@mui/material/Button";
 
 
-export default function UpdateGame() {
+export default function UpdateGame({ setFenDetected })  {
     const { capture } = useCapture();
     const [isCapturing, setIsCapturing] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
@@ -50,7 +50,7 @@ export default function UpdateGame() {
 
             {capturedImage && (
                 <div>
-                    <DetectPieces image={capturedImage} />
+                    <DetectPieces image={capturedImage} setFenDetected={setFenDetected} />
                 </div>
             )}
         </>

@@ -12,7 +12,6 @@ function Welcome() {
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
       <h1>Welcome to ChessLive</h1>
-      <p>Your go-to platform for live chess tracking and gameplay.</p>
     </div>
   );
 }
@@ -26,11 +25,9 @@ function App() {
             <ResponsiveAppBar />
             <div className="content">
               <Routes>
-                {/* Default route redirects to Welcome */}
                 <Route path="/" element={<Welcome />} />
                 <Route path="/play" element={<PlayContainer />} />
                 <Route path="/settings" element={<ConfidenceInput />} />
-                {/* Fallback route */}
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>

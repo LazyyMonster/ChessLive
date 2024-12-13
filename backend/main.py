@@ -126,7 +126,7 @@ def connect_detection_to_square(detections, boxes, square):
         return pieceLetter[piece]
     
     else:
-        piece = "1"
+        piece = ""
         return piece
     
 
@@ -134,7 +134,7 @@ def make_fen(pieces, boxes, image):
     import numpy as np
 
     ptsT, ptsL = make_grid(image)
-    print(ptsT, ptsL)
+    # print(ptsT, ptsL)
 
     x_coords = [ptsT[i][0] for i in range(9)]
     y_coords = [ptsL[i][1] for i in range(9)]
@@ -159,8 +159,6 @@ def make_fen(pieces, boxes, image):
         line_to_FEN = []
         for square in line:
             piece_on_square = connect_detection_to_square(pieces, boxes, square)
-            if piece_on_square == "1":
-                piece_on_square = ""
             line_to_FEN.append(piece_on_square)
         board_FEN.append(line_to_FEN)
 
@@ -181,7 +179,7 @@ def make_fen(pieces, boxes, image):
             fen_line += str(empty_count)
         complete_board_FEN.append(fen_line)
 
-    to_FEN = '/'.join(complete_board_FEN)
+        to_FEN = '/'.join(complete_board_FEN)
 
     return to_FEN
 

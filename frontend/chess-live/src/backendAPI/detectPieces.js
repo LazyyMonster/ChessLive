@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSettings } from "../components/settings/settings";
 import { useChess } from "../chessLogic/chessGame";
 
-export default function DetectPieces({ image }) {
+export default function DetectPieces({ image, setFenDetected }) {
     const { detectedCorners, piecesConf } = useSettings();
     const [error, setError] = useState(null);
     const { makeMove, findMove } = useChess();
@@ -44,6 +44,7 @@ export default function DetectPieces({ image }) {
 
             const fenDetected = response.data.fen;
             console.log(fenDetected);
+            setFenDetected(fenDetected);
             setError(null);
 
             const detectedMove = findMove(fenDetected);
