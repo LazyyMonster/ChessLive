@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { useCapture } from "../components/camera/captureContext";
 import DetectPieces from "./detectPieces";
 import Button from "@mui/material/Button";
+import { useSettings } from "../components/settings/settings";
 
 
 export default function UpdateGame({ setFenDetected })  {
@@ -10,6 +11,7 @@ export default function UpdateGame({ setFenDetected })  {
     const [capturedImage, setCapturedImage] = useState(null);
     const intervalRef = useRef(null);
     const [isValidStart, setIsValidStart] = useState(true);
+    const { detectFrequency } = useSettings();
 
 
     const detectPosition = () => {
@@ -28,7 +30,7 @@ export default function UpdateGame({ setFenDetected })  {
                     if (image) {
                         setCapturedImage(image);
                     }
-                }, 3000);
+                }, detectFrequency);
             }
         }
     };

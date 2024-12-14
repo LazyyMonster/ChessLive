@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import './App.css';
 import ResponsiveAppBar from "./components/navbar/navbar";
 import PlayContainer from "./components/mainContent/playContainer";
-import ConfidenceInput from "./components/settings/modelConfidence/confidenceInput";
+import SettingsInput from "./components/settings/settingsInput";
 import { CaptureProvider } from './components/camera/captureContext';
 import { ChessProvider } from "./chessLogic/chessGame";
 import { SettingsProvider } from "./components/settings/settings";
@@ -21,7 +21,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<WelcomePage />} />
                 <Route path="/play" element={<PlayContainer />} />
-                <Route path="/settings" element={<ConfidenceInput />} />
+                <Route path="/settings" element={<SettingsInput />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>
