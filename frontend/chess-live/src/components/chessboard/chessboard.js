@@ -15,6 +15,8 @@ export default function CustomChessboard() {
     isAnalysisMode,
     goToNextMove,
     goToPreviousMove,
+    resetGame,
+    loadPreviewGame,
   } = useChess();
 
   const [fenDetected, setFenDetected] = useState("");
@@ -61,6 +63,18 @@ export default function CustomChessboard() {
       </div>
       <div className="LiveBoard">
         <LiveChessboard fenDetected={fenDetected} />
+        <Button
+          variant="outlined"
+          onClick={resetGame}
+        >
+          Reset Game
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={loadPreviewGame}
+        >
+          Load Preview Game
+        </Button>
       </div>
     </>
   );
