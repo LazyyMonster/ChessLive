@@ -53,7 +53,7 @@ export const ChessProvider = ({ children }) => {
     analysisGame.reset();
     setFen(STARTING_FEN);
     setLastMove(null);
-    setCurrentMoveIndex(0);
+    setCurrentMoveIndex(-1);
     setIsAnalysisMode(false);
   };
 
@@ -140,6 +140,28 @@ export const ChessProvider = ({ children }) => {
     return null;
   }
 
+  const goToFirstMove = () => {
+    if (!isAnalysisMode) return;
+
+    analysisGame.reset();
+    setFenAndLastMove(analysisGame);
+    setCurrentMoveIndex(-1);
+  };
+
+  const goToLastMove = () => {
+    if (!isAnalysisMode) return;
+
+    const pgn = game.pgn();
+    const moves = pgn
+      .split(" ")
+      .filter((token) => !/^\d+\.$/.test(token))
+      .filter(Boolean);
+
+    analysisGame.loadPgn(moves.join(" "));
+    setFenAndLastMove(analysisGame);
+    setCurrentMoveIndex(moves.length - 1);
+  };
+
   const validateStartingPosition = (detectedFen) => {
     const isValid = (detectedFen === STARTING_POSITION)
     console.log(isValid);
@@ -155,6 +177,8 @@ export const ChessProvider = ({ children }) => {
         toggleAnalysisMode,
         goToNextMove,
         goToPreviousMove,
+        goToFirstMove,
+        goToLastMove,
         goToMove,
         isAnalysisMode,
         fen,

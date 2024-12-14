@@ -15,6 +15,8 @@ export default function CustomChessboard() {
     isAnalysisMode,
     goToNextMove,
     goToPreviousMove,
+    goToFirstMove,
+    goToLastMove,
     resetGame,
     loadPreviewGame,
   } = useChess();
@@ -45,17 +47,17 @@ export default function CustomChessboard() {
           {!isAnalysisMode && <UpdateGame setFenDetected={setFenDetected} />}
           {isAnalysisMode && (
             <>
-              <Button
-                variant="outlined"
-                onClick={goToPreviousMove}
-              >
-                Previous Move
+              <Button variant="outlined" onClick={goToFirstMove}>
+                {"<<"}
               </Button>
-              <Button
-                variant="outlined"
-                onClick={goToNextMove}
-              >
-                Next Move
+              <Button variant="outlined" onClick={goToPreviousMove}>
+                {"<"}
+              </Button>
+              <Button variant="outlined" onClick={goToNextMove}>
+                {">"}
+              </Button>
+              <Button variant="outlined" onClick={goToLastMove}>
+                {">>"}
               </Button>
             </>
           )}
