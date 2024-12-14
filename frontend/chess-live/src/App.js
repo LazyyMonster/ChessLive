@@ -7,14 +7,8 @@ import ConfidenceInput from "./components/settings/modelConfidence/confidenceInp
 import { CaptureProvider } from './components/camera/captureContext';
 import { ChessProvider } from "./chessLogic/chessGame";
 import { SettingsProvider } from "./components/settings/settings";
+import WelcomePage from "./components/mainContent/welcomePage";
 
-function Welcome() {
-  return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>Welcome to ChessLive</h1>
-    </div>
-  );
-}
 
 function App() {
   return (
@@ -25,7 +19,7 @@ function App() {
             <ResponsiveAppBar />
             <div className="content">
               <Routes>
-                <Route path="/" element={<Welcome />} />
+                <Route path="/" element={<WelcomePage />} />
                 <Route path="/play" element={<PlayContainer />} />
                 <Route path="/settings" element={<ConfidenceInput />} />
                 <Route path="*" element={<Navigate to="/" />} />

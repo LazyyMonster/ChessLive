@@ -10,45 +10,38 @@ import LiveChessboard from "./detectedBoard";
 export default function CustomChessboard() {
   const {
     fen,
+    lastMove,
     toggleAnalysisMode,
-    analysisMode,
+    isAnalysisMode,
     goToNextMove,
     goToPreviousMove,
   } = useChess();
 
   const [fenDetected, setFenDetected] = useState("");
 
-  const handleKeyDown = (e) => {
-    if (!analysisMode) return;
-
-    if (e.key === "ArrowRight") {
-      goToNextMove();
-    } else if (e.key === "ArrowLeft") {
-      goToPreviousMove();
-    }
-  };
-
-  React.useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+  const highlightLastMove = () => {
+    if (!lastMove) return {};
+    const { from, to } = lastMove;
+    return {
+      [from]: { backgroundColor: "rgba(255, 190, 0, 0.5)" },
+      [to]: { backgroundColor: "rgba(255, 190, 0, 0.5)" },
     };
-  }, [analysisMode]);
+  };
 
   return (
     <>
       <div className="CustomBoard">
-        <h1>{analysisMode ? "Analysis Mode" : "Live Position"}</h1>
-        <Chessboard position={fen} boardWidth={500} />
+        <h1>{isAnalysisMode ? "Analysis Mode" : "Live Position"}</h1>
+        <Chessboard position={fen} boardWidth={500} customSquareStyles={highlightLastMove()} />
         <Stack direction="row" spacing={2} sx={{ marginTop: "16px" }}>
           <Button
             variant="contained"
             onClick={toggleAnalysisMode}
           >
-            {analysisMode ? "Return To Live Mode" : "Enable Analysis Mode"}
+            {isAnalysisMode ? "Return To Live Mode" : "Enable Analysis Mode"}
           </Button>
-          {!analysisMode && <UpdateGame setFenDetected={setFenDetected} />}
-          {analysisMode && (
+          {!isAnalysisMode && <UpdateGame setFenDetected={setFenDetected} />}
+          {isAnalysisMode && (
             <>
               <Button
                 variant="outlined"

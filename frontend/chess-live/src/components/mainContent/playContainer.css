@@ -1,7 +1,7 @@
 .parent {
     display: flex;
-    height: 90vh; /* Full height of the viewport */
-    width: 90vw;  /* Full width of the viewport */
+    height: 90vh;
+    width: 90vw;
     margin: 20px;
   }
   
@@ -12,7 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 50px; 
+    gap: 30px; 
   }
   
   .right {

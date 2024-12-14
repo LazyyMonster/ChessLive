@@ -4,8 +4,6 @@ import { Chessboard } from "react-chessboard";
 
 export default function LiveChessboard({ fenDetected }) {
 
-
-
   return (
     <>
       <h1>Detected Pieces</h1>

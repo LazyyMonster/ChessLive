@@ -10,12 +10,12 @@ export default function PlayContainer({ setDetectedCorners }) {
   return (
     <div className="parent">
       <div className="left">
-        <CustomChessboard/>
+        <CustomChessboard />
       </div>
 
       <div className="right">
         <div className="pgn">
-          <ChessPGNBreadcrumbs/>
+          <ChessPGNBreadcrumbs />
         </div>
 
         <div className="webcam">
