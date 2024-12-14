@@ -108,11 +108,20 @@ export const ChessProvider = ({ children }) => {
     }
   };
 
-  const updatePosition = (newFen) => {
-    const tempGame = new Chess();
-    tempGame.load(newFen);
-    setFen(newFen);
-    setGame(tempGame);
+  const goToMove = (index) => {
+    if (isAnalysisMode) {
+      const pgn = game.pgn();
+      const moves = pgn
+        .split(" ")
+        .filter((token) => !/^\d+\.$/.test(token))
+        .filter(Boolean);
+
+      if (index >= 0 && index < moves.length) {
+        analysisGame.loadPgn(moves.slice(0, index + 1).join(" "));
+        setFenAndLastMove(analysisGame);
+        setCurrentMoveIndex(index);
+      }
+    }
   };
 
   const findMove = (fenAfter) => {
@@ -146,11 +155,11 @@ export const ChessProvider = ({ children }) => {
         toggleAnalysisMode,
         goToNextMove,
         goToPreviousMove,
+        goToMove,
         isAnalysisMode,
         fen,
         currentMoveIndex,
         findMove,
-        updatePosition,
         validateStartingPosition,
         isPlayingOnline,
         setIsPlayingOnline,
