@@ -34,7 +34,7 @@ export default function CustomChessboard() {
     <>
       <div className="CustomBoard">
         <h1>{isAnalysisMode ? "Analysis Mode" : "Live Position"}</h1>
-        <Chessboard position={fen} boardWidth={500} customSquareStyles={highlightLastMove()} />
+        <Chessboard position={fen} boardWidth={500} customSquareStyles={highlightLastMove()} arePiecesDraggable={false} animationDuration={200} />
         <Stack direction="row" spacing={2} sx={{ marginTop: "16px" }}>
           <Button
             variant="contained"
