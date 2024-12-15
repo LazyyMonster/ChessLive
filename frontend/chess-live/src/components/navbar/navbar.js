@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 const pages = [
   { name: "Follow game offline", path: "/play" },
-  { name: "Play on Lichess", path: "/play" },
+  { name: "Play on Lichess", path: "/playLichess" },
   { name: "Settings", path: "/settings" }
 ];
 
@@ -50,7 +50,6 @@ export default function ResponsiveAppBar() {
               </Button>
             ))}
           </Box>
-          <SettingsIcon />
         </Toolbar>
       </Container>
     </AppBar>

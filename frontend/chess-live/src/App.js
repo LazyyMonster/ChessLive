@@ -21,6 +21,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<WelcomePage />} />
                 <Route path="/play" element={<PlayContainer />} />
+                <Route path="/playLichess" element={<PlayContainer />} />
                 <Route path="/settings" element={<SettingsInput />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
