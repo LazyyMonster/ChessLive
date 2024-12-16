@@ -1,14 +1,12 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import ChessRookIcon from '../icons/chessRookIcon.js';
-import SettingsIcon from '../icons/settingsIcon.js';
-
-
 import { Link } from "react-router-dom";
+import LichessOAuth from '../../lichessAPI/lichessOAuth.js';
 
 const pages = [
   { name: "Follow game offline", path: "/play" },
@@ -17,6 +15,8 @@ const pages = [
 ];
 
 export default function ResponsiveAppBar() {
+  const { token, username, profileUrl, lichessLogin, lichessLogout } = LichessOAuth();
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -49,6 +49,52 @@ export default function ResponsiveAppBar() {
                 {page.name}
               </Button>
             ))}
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {token ? (
+              <>
+                <Box sx={{ mr: 2, color: 'white', fontWeight: 600 }}>
+                  <a
+                    href={profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: 'none', color: 'white' }}
+                  >
+                    Welcome, {username}!
+                  </a>
+                </Box>
+                <Button
+                  onClick={lichessLogout}
+                  sx={{
+                    my: 2,
+                    color: 'white',
+                    display: 'block',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    border: '1px solid white',
+                    ml: 2
+                  }}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={lichessLogin}
+                sx={{
+                  my: 2,
+                  color: 'white',
+                  display: 'block',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  border: '1px solid white',
+                  ml: 2
+                }}
+              >
+                Login with Lichess
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>
