@@ -9,8 +9,7 @@ const LichessContext = createContext();
 export const LichessProvider = ({ children }) => {
 
     const { token } = LichessOAuth();
-    const { setGame, setFenAndLastMove } = useChess();
-    const [ongoingGames, setOngoingGames] = useState([]);
+    const {setGameFromLichess } = useChess();
 
     const fetchGamePGN = async (gameId) => {
         if (!token || !gameId) return null;
@@ -68,7 +67,7 @@ export const LichessProvider = ({ children }) => {
                     color: game.color,
                 }));
 
-                setOngoingGames(actualGames);
+                // setOngoingGames(actualGames);
                 console.log("Simplified ongoing games:", actualGames);
                 return actualGames;
             } else {
@@ -87,77 +86,86 @@ export const LichessProvider = ({ children }) => {
         }
     }, [token]);
 
-
-    // useEffect(() => {
-    //     if (ongoingGames.length > 0) {
-    //         setGameFromLichess(ongoingGames[0].gameId);
-
-    //     }
-    // }, [ongoingGames]);
-
-
-
-
-    // const [gameUpdates, setGameUpdates] = useState([]);
+    const [gameUpdates, setGameUpdates] = useState([]);
     // const activeStreams = useRef(new Set());
 
-    // const startGameStream = (gameId) => {
-    //     if (activeStreams.current.has(gameId)) {
-    //         console.log(`Stream for game ${gameId} is already active.`);
-    //         return;
-    //     }
-
-    //     console.log(`Starting stream for game ${gameId}`);
-    //     activeStreams.current.add(gameId);
-
-    //     const path = `/api/stream/game/${gameId}`;
-    //     fetch(`${lichessHost}${path}`, {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`,
-    //         },
-    //     }).then((response) => {
-    //         if (!response.body) {
-    //             throw new Error("Readable stream not supported.");
-    //         }
-
-    //         readStream((update) => {
-    //             setGameUpdates((prev) => [...prev, update]);
-    //         })(response);
-    //     })
-    //         .catch((err) => {
-    //             console.error(`Stream error for game ${gameId}:`, err);
-    //         })
-    // };
-
-    // const readStream = (processLine) => (response) => {
-    //     const stream = response.body.getReader();
-    //     const decoder = new TextDecoder();
-    //     let buffer = "";
-
-    //     const loop = () => {
-    //         stream.read().then(({ done, value }) => {
-    //             if (done) {
-    //                 if (buffer) processLine(JSON.parse(buffer));
-    //                 return;
-    //             }
-    //             const chunk = decoder.decode(value, { stream: true });
-    //             buffer += chunk;
-
-    //             const lines = buffer.split(/\r?\n/);
-    //             buffer = lines.pop();
-    //             lines.filter(Boolean).forEach((line) => processLine(JSON.parse(line)));
-
-    //             loop();
-    //         });
-    //     };
-    //     loop();
-    // };
+    const lichessStreamGame = (callback, gameId) => {
+        const path = `/api/board/game/stream/${gameId}`;
+      
+        fetchResponse(token, path)
+          .then(readStream(callback))
+          .catch((error) => {
+            console.error(`Error starting game stream for game ${gameId}:`, error);
+          });
+      };
+      
+      const readStream = (processLine) => (response) => {
+        const stream = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+      
+        const lineSeparator = /\r?\n/;
+      
+        const processStream = () =>
+          stream.read().then(({ done, value }) => {
+            if (done) {
+              // Process any leftover buffered data
+              if (buffer.length > 0) {
+                try {
+                  processLine(JSON.parse(buffer));
+                } catch (error) {
+                  console.error("Error processing leftover data:", buffer, error);
+                }
+              }
+              return; // Stream has ended
+            }
+      
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
+      
+            // Split buffer into complete lines and process each line
+            const lines = buffer.split(lineSeparator);
+            buffer = lines.pop(); // Keep the last incomplete line in the buffer
+      
+            for (const line of lines) {
+              if (line) {
+                try {
+                  processLine(JSON.parse(line));
+                } catch (error) {
+                  console.error("Error processing line:", line, error);
+                }
+              }
+            }
+      
+            // Continue reading the stream
+            return processStream();
+          });
+      
+        processStream();
+      };
+      
+      const fetchResponse = (token, path) => {
+        const url = `https://lichess.org${path}`;
+        return fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch from ${url}: ${response.statusText}`);
+          }
+          return response;
+        });
+      };
+      
 
     return (
         <LichessContext.Provider
             value={{
                 fetchGamePGN,
-                fetchOngoingGames
+                fetchOngoingGames,
+                lichessStreamGame,
             }}
         >
             {children}
