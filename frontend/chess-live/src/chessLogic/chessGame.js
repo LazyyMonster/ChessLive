@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Chess } from 'chess.js';
 
 const ChessContext = createContext();
@@ -10,7 +10,6 @@ export const STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq 
 export const ChessProvider = ({ children }) => {
   //Live game variables
   const [game, setGame] = useState(new Chess(STARTING_FEN));
-
 
   //Shared variable livae and analysis
   const [lastMove, setLastMove] = useState(null);
@@ -167,11 +166,32 @@ export const ChessProvider = ({ children }) => {
     console.log(isValid);
   };
 
+
+
+  // Lichess games
+
+  const setGameFromLichess = (pgn) => {
+    if (pgn) {
+      const onlineGame = new Chess(pgn);
+      setGame(onlineGame);
+      // console.log(onlineGame.history())
+      setFenAndLastMove(onlineGame);
+    } else {
+      console.error("No PGN available to load the game.");
+    }
+  };
+
+
+  useEffect(() => {
+
+  }, [game]);
+
   return (
     <ChessContext.Provider
       value={{
         makeMove,
         resetGame,
+        setGame,
         getPgn,
         getFen,
         toggleAnalysisMode,
@@ -188,7 +208,10 @@ export const ChessProvider = ({ children }) => {
         isPlayingOnline,
         setIsPlayingOnline,
         lastMove,
+        setLastMove,
         loadPreviewGame,
+        setFenAndLastMove,
+        setGameFromLichess,
       }}
     >
       {children}

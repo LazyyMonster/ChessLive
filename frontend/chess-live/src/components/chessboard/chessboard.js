@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import UpdateGame from "../../backendAPI/updateGame";
 import LiveChessboard from "./detectedBoard";
+import MainControls from "../../chessLogic/buttons/mainControls";
 
 
 export default function CustomChessboard() {
@@ -17,8 +18,6 @@ export default function CustomChessboard() {
     goToPreviousMove,
     goToFirstMove,
     goToLastMove,
-    resetGame,
-    loadPreviewGame,
   } = useChess();
 
   const [fenDetected, setFenDetected] = useState("");
@@ -65,18 +64,7 @@ export default function CustomChessboard() {
       </div>
       <div className="LiveBoard">
         <LiveChessboard fenDetected={fenDetected} />
-        <Button
-          variant="outlined"
-          onClick={resetGame}
-        >
-          Reset Game
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={loadPreviewGame}
-        >
-          Load Preview Game
-        </Button>
+        <MainControls></MainControls>
       </div>
     </>
   );
