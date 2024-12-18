@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,15 +7,21 @@ import Button from '@mui/material/Button';
 import ChessRookIcon from '../icons/chessRookIcon.js';
 import { Link } from "react-router-dom";
 import LichessOAuth from '../../lichessAPI/lichessOAuth.js';
+import { useChess } from '../../chessLogic/chessGame.js';
 
 const pages = [
-  { name: "Follow game offline", path: "/play" },
-  { name: "Play on Lichess", path: "/playLichess" },
+  { name: "Follow game offline", path: "/play", isOnline: false },
+  { name: "Play on Lichess", path: "/playLichess", isOnline: true },
   { name: "Settings", path: "/settings" }
 ];
 
 export default function ResponsiveAppBar() {
   const { token, username, profileUrl, lichessLogin, lichessLogout } = LichessOAuth();
+  const { setIsPlayingOnline } = useChess();
+
+  const handleButtonClick = (isOnline) => {
+    setIsPlayingOnline(isOnline);
+  };
 
   return (
     <AppBar position="static">
@@ -44,6 +50,7 @@ export default function ResponsiveAppBar() {
                 key={page.name}
                 component={Link}
                 to={page.path}
+                onClick={() => handleButtonClick(page.isOnline)}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page.name}

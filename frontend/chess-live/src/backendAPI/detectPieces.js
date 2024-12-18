@@ -2,11 +2,13 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSettings } from "../components/settings/settings";
 import { useChess } from "../chessLogic/chessGame";
+import { useLichess } from "../lichessAPI/lichessGame";
 
 export default function DetectPieces({ image, setFenDetected }) {
     const { detectedCorners, piecesConf } = useSettings();
     const [error, setError] = useState(null);
-    const { makeMove, findMove } = useChess();
+    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, playerColor, getFen, lastMove } = useChess();
+    const { sendMove } = useLichess();
 
     useEffect(() => {
         if (image) {
@@ -43,14 +45,36 @@ export default function DetectPieces({ image, setFenDetected }) {
             );
 
             const fenDetected = response.data.fen;
-            console.log(fenDetected);
+            console.log("Detected FEN:", fenDetected);
             setFenDetected(fenDetected);
             setError(null);
 
+            if (!isPlayingOnline) {
+                const detectedMove = findMove(fenDetected);
+                if (detectedMove) {
+                    console.log("Making move:", detectedMove);
+                    makeMove(detectedMove);
+                } else {
+                    console.error("No valid move found.");
+                }
+                return;
+            }
+
+            const prevTurn = getFen().split(" ")[1];
+            console.log('turn is ',prevTurn)
+            const isPlayerTurn = (playerColor === "white" && prevTurn === "w") || 
+                                 (playerColor === "black" && prevTurn === "b");
+
+            if (!isPlayerTurn) {
+                console.warn("Not your turn to move. Move skipped.");
+                return;
+            }
+
             const detectedMove = findMove(fenDetected);
             if (detectedMove) {
-                console.log(detectedMove);
-                makeMove(detectedMove);
+                console.log("Making move:", detectedMove);
+                const playerMove = returnAndMakeMove(detectedMove);
+                sendMove(playerMove);
             } else {
                 console.error("No valid move found.");
             }

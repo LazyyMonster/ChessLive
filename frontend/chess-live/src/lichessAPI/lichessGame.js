@@ -9,7 +9,7 @@ const LichessContext = createContext();
 export const LichessProvider = ({ children }) => {
 
     const { token } = LichessOAuth();
-    const {setGameFromLichess } = useChess();
+    const [gameId, setGameId] = useState(null);
 
     const fetchGamePGN = async (gameId) => {
         if (!token || !gameId) return null;
@@ -158,6 +158,30 @@ export const LichessProvider = ({ children }) => {
           return response;
         });
       };
+
+      const sendMove = async (move) => {
+        const url = `https://lichess.org/api/board/game/${gameId}/move/${move}`;
+      
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+      
+            },
+          });
+      
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to make move: ${response.status} ${response.statusText} - ${errorText}`);
+          }
+      
+          return await response.json();
+        } catch (error) {
+          console.error(`Error making move: ${error.message}`);
+          throw error;
+        }
+      };
       
 
     return (
@@ -166,6 +190,8 @@ export const LichessProvider = ({ children }) => {
                 fetchGamePGN,
                 fetchOngoingGames,
                 lichessStreamGame,
+                sendMove,
+                setGameId,
             }}
         >
             {children}

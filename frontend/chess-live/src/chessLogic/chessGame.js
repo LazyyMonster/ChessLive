@@ -21,7 +21,8 @@ export const ChessProvider = ({ children }) => {
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
 
   //Playing mode variables
-  const [isPlayingOnline, setIsPlayingOnline] = useState(false);
+  const [isPlayingOnline, setIsPlayingOnline] = useState(true);
+  const [playerColor, setPlayerColor] = useState('white');
 
   const setFenAndLastMove = (chess) => {
     setFen(chess.fen());
@@ -45,6 +46,17 @@ export const ChessProvider = ({ children }) => {
       setLastMove({ from: madeMove.from, to: madeMove.to });
       setFen(game.fen());
     }
+  };
+
+  const returnAndMakeMove = (move) => {
+    const madeMove = game.move(move);
+    if (madeMove) {
+      setLastMove({ from: madeMove.from, to: madeMove.to });
+      setFen(game.fen());
+    }
+    const moveUCI = madeMove.from + madeMove.to;
+    console.log('uci uci', moveUCI);
+    return moveUCI;
   };
 
   const resetGame = () => {
@@ -170,9 +182,18 @@ export const ChessProvider = ({ children }) => {
 
   // Lichess games
 
-  const setGameFromLichess = (pgn) => {
-    if (pgn) {
-      const onlineGame = new Chess(pgn);
+  const setGameFromLichess = (moves) => {
+    console.log('settgamefromlchess', moves)
+    if (moves) {
+      const onlineGame = new Chess();
+
+      moves.forEach((move) => {
+        try {
+          onlineGame.move(move);
+        } catch (err) {
+          console.error(`Invalid move received: ${move}`, err);
+        }
+      });
       setGame(onlineGame);
       // console.log(onlineGame.history())
       setFenAndLastMove(onlineGame);
@@ -212,6 +233,9 @@ export const ChessProvider = ({ children }) => {
         loadPreviewGame,
         setFenAndLastMove,
         setGameFromLichess,
+        playerColor,
+        setPlayerColor,
+        returnAndMakeMove,
       }}
     >
       {children}
