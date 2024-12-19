@@ -14,7 +14,7 @@ export default function MainControls() {
 
     const { resetGame, loadPreviewGame } = useChess();
     const { fetchOngoingGames, lichessStreamGame, setGameId } = useLichess();
-    const {setGameFromLichess, makeMove, isPlayingOnline, setPlayerColor } = useChess();
+    const {setGameFromLichess, makeMove, isPlayingOnline, setPlayerColor, getPgn } = useChess();
 
     const handleLoadGames = async () => {
         setLoading(true);
@@ -52,8 +52,6 @@ export default function MainControls() {
                 playerColor = isWhitePlayer ? "white" : "black";
                 setPlayerColor(playerColor);
     
-                console.log(`Player color is: ${playerColor}`);
-                console.log("Initializing game with moves:", moves);
     
                 if (!gameSetOnce) {
                     gameSetOnce = true;
@@ -67,10 +65,10 @@ export default function MainControls() {
             console.log("Update type:", update.type);
     
             if (update.type === "gameState" && update.moves) {
-                console.log("Handling 'gameState' update...");
+
                 
                 const moves = update.moves.split(" ");
-                console.log("All moves received:", moves);
+
             
                 if (moves.length > lastMoveCount) {
                     const newMove = moves[moves.length - 1];

@@ -182,26 +182,24 @@ export const ChessProvider = ({ children }) => {
 
   // Lichess games
 
-  const setGameFromLichess = (moves) => {
-    console.log('settgamefromlchess', moves)
+  const setGameFromLichess = (moves) => {  
     if (moves) {
-      const onlineGame = new Chess();
+      const updatedGame = game;
 
+      updatedGame.reset();
+  
       moves.forEach((move) => {
         try {
-          onlineGame.move(move);
+          updatedGame.move(move);
         } catch (err) {
           console.error(`Invalid move received: ${move}`, err);
         }
       });
-      setGame(onlineGame);
-      // console.log(onlineGame.history())
-      setFenAndLastMove(onlineGame);
+      setFenAndLastMove(updatedGame);
     } else {
-      console.error("No PGN available to load the game.");
     }
   };
-
+  
 
   useEffect(() => {
 
