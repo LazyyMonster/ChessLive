@@ -22,9 +22,6 @@ export function CaptureProvider({ children }) {
         });
         if (imageSrc) {
             const imgElement = new Image();
-            imgElement.onload = () => {
-                console.log(`Captured image size: ${imgElement.width}x${imgElement.height}`);
-            };
             imgElement.src = imageSrc;
         }
 

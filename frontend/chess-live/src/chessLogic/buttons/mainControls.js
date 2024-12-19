@@ -23,7 +23,6 @@ export default function MainControls() {
             if (simplifiedGames && simplifiedGames.length > 0) {
                 setGames(simplifiedGames);
             } else {
-                console.warn("No ongoing games found.");
                 setGames([]);
             }
         } catch (error) {
@@ -42,10 +41,7 @@ export default function MainControls() {
         let lastMoveCount = 0;
     
         lichessStreamGame((update) => {
-            console.log("Update received:", update);
             if (update.type === "gameFull") {
-                console.log("Handling 'gameFull' update...");
-
                 const moves = update.state?.moves ? update.state.moves.split(" ") : [];
                 const isWhitePlayer = update.white?.id !== undefined;
     
@@ -62,42 +58,28 @@ export default function MainControls() {
                 lastMoveCount = moves.length;
             }
     
-            console.log("Update type:", update.type);
-    
             if (update.type === "gameState" && update.moves) {
-
-                
                 const moves = update.moves.split(" ");
-
-            
                 if (moves.length > lastMoveCount) {
                     const newMove = moves[moves.length - 1];
-                    console.log(`New move detected: ${newMove}`);
 
                     const isOpponentTurn =
                         (playerColor === "white" && moves.length % 2 === 0) ||
                         (playerColor === "black" && moves.length % 2 !== 0);
             
-                    console.log("Is opponent's turn:", isOpponentTurn);
             
                     if (isOpponentTurn) {
-                        console.log(`Applying opponent's move: ${newMove}`);
                         makeMove({
                             from: newMove.slice(0, 2),
                             to: newMove.slice(2, 4),
                         });
                     }
         
-                    console.log(`Updating lastMoveCount: ${lastMoveCount} -> ${moves.length}`);
                     lastMoveCount = moves.length;
-                } else {
-                    console.log("No new move detected.");
                 }
                 setGameMoves(moves);
             }
         }, gameId);
-    
-        console.log(`Started streaming updates for game: ${gameId}`);
     };
     
     return (
@@ -157,19 +139,6 @@ export default function MainControls() {
                             <p>Selected Game ID: {selectedGameId}</p>
                         )}
                     </div>
-
-                    {/* <div>
-                        <h3>Moves</h3>
-                        {gameMoves.length > 0 ? (
-                            <ul>
-                                {gameMoves.map((move, index) => (
-                                    <li key={index}>{move}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No moves yet. Waiting for updates...</p>
-                        )}
-                    </div> */}
                 </>
             )}
         </>

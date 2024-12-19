@@ -46,7 +46,7 @@ export const LichessProvider = ({ children }) => {
     };
 
     const fetchOngoingGames = async () => {
-        if (!token) { console.log('nima'); return; }
+        if (!token) return;
 
         try {
             const response = await fetch(`${lichessHost}/api/account/playing`, {
@@ -67,8 +67,6 @@ export const LichessProvider = ({ children }) => {
                     color: game.color,
                 }));
 
-                // setOngoingGames(actualGames);
-                console.log("Simplified ongoing games:", actualGames);
                 return actualGames;
             } else {
                 console.warn("No ongoing games found.");
@@ -81,9 +79,6 @@ export const LichessProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (token) {
-            console.log('lama')
-        }
     }, [token]);
 
     const [gameUpdates, setGameUpdates] = useState([]);

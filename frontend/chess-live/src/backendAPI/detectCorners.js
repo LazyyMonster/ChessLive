@@ -4,6 +4,7 @@ import { useCapture } from "../components/camera/captureContext";
 import CanvasOverlay from "../components/camera/canvasOverlay";
 import { useSettings } from "../components/settings/settings";
 import CameraView from "../components/camera/cameraView";
+import Button from "@mui/material/Button";
 
 export default function DetectCorners() {
   const { capture, setWebcamRef } = useCapture();
@@ -48,7 +49,6 @@ export default function DetectCorners() {
         const detectedCorners = response.data.corners || [];
         setError(null);
 
-        console.log("Detected corners in DetectCorners:", detectedCorners);
         setDetectedCorners(detectedCorners);
       } catch (err) {
         setError(
@@ -67,7 +67,8 @@ export default function DetectCorners() {
         <CanvasOverlay />
       </div>
 
-      <button
+      <Button
+        variant="contained"
         onClick={handleCapture}
         style={{
           marginTop: "10px",
@@ -76,7 +77,7 @@ export default function DetectCorners() {
         }}
       >
         Detect Corners
-      </button>
+      </Button>
 
       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
     </div>

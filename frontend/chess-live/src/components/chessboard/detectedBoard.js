@@ -40,10 +40,7 @@ const findDifferences = (fen1, fen2) => {
 
 export default function LiveChessboard({ fenDetected }) {
   const { getFen } = useChess();
-
   const actualFen = getFen().split(" ")[0];
-  console.log(actualFen, fenDetected);
-
   const squareStyles = findDifferences(actualFen, fenDetected);
 
   return (

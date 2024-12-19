@@ -55,7 +55,6 @@ export const ChessProvider = ({ children }) => {
       setFen(game.fen());
     }
     const moveUCI = madeMove.from + madeMove.to;
-    console.log('uci uci', moveUCI);
     return moveUCI;
   };
 
@@ -143,7 +142,6 @@ export const ChessProvider = ({ children }) => {
       boardBefore.move(move);
       const fenBefore = boardBefore.fen().split(' ')[0];
       if (fenBefore === fenAfter) {
-        console.log(move);
         return move;
       }
       boardBefore.undo();
@@ -175,7 +173,6 @@ export const ChessProvider = ({ children }) => {
 
   const validateStartingPosition = (detectedFen) => {
     const isValid = (detectedFen === STARTING_POSITION)
-    console.log(isValid);
   };
 
 
