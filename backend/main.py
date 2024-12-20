@@ -40,7 +40,7 @@ app.add_middleware(
 
 def detect_pieces(image, confidence):
 
-    results = pieces_model.predict(source = image, conf = confidence, save=True)
+    results = pieces_model.predict(source = image, conf = confidence, save=False)
     detections = []
 
     boxes = results[0].boxes
@@ -134,7 +134,6 @@ def make_fen(pieces, boxes, image):
     import numpy as np
 
     ptsT, ptsL = make_grid(image)
-    # print(ptsT, ptsL)
 
     x_coords = [ptsT[i][0] for i in range(9)]
     y_coords = [ptsL[i][1] for i in range(9)]
@@ -228,6 +227,35 @@ def order_corners(pts):
 
     return rect
 
+def make_fen_optimized(pieces, boxes, image):
+    ptsT, ptsL = make_grid(image)
+    x_coords = np.array([p[0] for p in ptsT])
+    y_coords = np.array([p[1] for p in ptsL])
+
+    board_FEN = []
+    for i in range(8):
+        fen_line = ""
+        empty_count = 0
+        for j in range(8):
+            square = np.array([
+                [x_coords[j], y_coords[i]],
+                [x_coords[j+1], y_coords[i]],
+                [x_coords[j+1], y_coords[i+1]],
+                [x_coords[j], y_coords[i+1]],
+            ])
+            piece = connect_detection_to_square(pieces, boxes, square)
+            if piece:
+                if empty_count > 0:
+                    fen_line += str(empty_count)
+                    empty_count = 0
+                fen_line += piece
+            else:
+                empty_count += 1
+        if empty_count > 0:
+            fen_line += str(empty_count)
+        board_FEN.append(fen_line)
+    return '/'.join(board_FEN)
+
 
 @app.post("/fen_from_image/")
 async def fen_from_image(
@@ -236,15 +264,10 @@ async def fen_from_image(
 ):
     try:
         parsed_data = json.loads(data)
-
         corners = parsed_data.get("corners")
-        if not corners:
-            raise HTTPException(status_code=400, detail="Missing 'corners' in data.")
-        
         pieces_conf = parsed_data.get("pieces_conf")
-        if pieces_conf is None:
-            raise HTTPException(status_code=400, detail="Missing 'pieces_conf' in data.")
-        
+        if not corners or pieces_conf is None:
+            raise HTTPException(status_code=400, detail="Missing 'corners' or 'pieces_conf' in data.")
         ordered_corners = [
             corners["A1"],
             corners["A8"],
@@ -253,9 +276,7 @@ async def fen_from_image(
         ]
 
         image_bytes = await file.read()
-        image = np.frombuffer(image_bytes, dtype=np.uint8)
-        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
+        image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
         transformed_image = cut_chessboard(image, ordered_corners)
 
         pieces, boxes = detect_pieces(transformed_image, pieces_conf)
@@ -264,12 +285,10 @@ async def fen_from_image(
 
         return {"fen": fen}
 
-    except KeyError as e:
-        raise HTTPException(status_code=400, detail=f"Missing corner: {str(e)}")
-    except json.JSONDecodeError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid JSON in 'data': {str(e)}")
+    except (KeyError, json.JSONDecodeError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=f"Error processing request: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
 
 @app.post("/detect_corners/")
@@ -279,7 +298,7 @@ async def detect_corners(file: UploadFile, corner_conf: float):
     image = np.frombuffer(image_bytes, dtype=np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-    results = corner_model.predict(source=image, conf=corner_conf, save=True)
+    results = corner_model.predict(source=image, conf=corner_conf, save=False)
     detections = []
 
     for result in results[0].boxes:

@@ -17,6 +17,7 @@ export default function MainControls() {
     const {setGameFromLichess, makeMove, isPlayingOnline, setPlayerColor, getPgn } = useChess();
 
     const handleLoadGames = async () => {
+        console.log('klik zaladuj gierki');
         setLoading(true);
         try {
             const simplifiedGames = await fetchOngoingGames();
@@ -132,7 +133,7 @@ export default function MainControls() {
                                 ))}
                             </Select>
                         ) : (
-                            !loading && <p>No ongoing games available.</p>
+                            !loading
                         )}
 
                         {selectedGameId && (

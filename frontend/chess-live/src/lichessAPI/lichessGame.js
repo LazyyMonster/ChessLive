@@ -1,6 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
-import { useChess } from '../chessLogic/chessGame';
-import LichessOAuth from "./lichessOAuth";
+import React, { createContext, useState, useContext} from 'react';
 
 const lichessHost = "https://lichess.org";
 
@@ -8,11 +6,14 @@ const LichessContext = createContext();
 
 export const LichessProvider = ({ children }) => {
 
-    const { token } = LichessOAuth();
     const [gameId, setGameId] = useState(null);
 
+    const getToken = () => {
+      return localStorage.getItem('lichessToken');
+    }
+
     const fetchGamePGN = async (gameId) => {
-        if (!token || !gameId) return null;
+        if (!getToken() || !gameId) return null;
 
         try {
             const response = await fetch(`${lichessHost}/game/export/${gameId}`, {
@@ -46,12 +47,12 @@ export const LichessProvider = ({ children }) => {
     };
 
     const fetchOngoingGames = async () => {
-        if (!token) return;
+        if (!getToken()) return;
 
         try {
             const response = await fetch(`${lichessHost}/api/account/playing`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${getToken()}`,
                 },
             });
             if (!response.ok) {
@@ -78,16 +79,13 @@ export const LichessProvider = ({ children }) => {
         }
     };
 
-    useEffect(() => {
-    }, [token]);
-
     const [gameUpdates, setGameUpdates] = useState([]);
     // const activeStreams = useRef(new Set());
 
     const lichessStreamGame = (callback, gameId) => {
         const path = `/api/board/game/stream/${gameId}`;
       
-        fetchResponse(token, path)
+        fetchResponse(path)
           .then(readStream(callback))
           .catch((error) => {
             console.error(`Error starting game stream for game ${gameId}:`, error);
@@ -139,12 +137,12 @@ export const LichessProvider = ({ children }) => {
         processStream();
       };
       
-      const fetchResponse = (token, path) => {
+      const fetchResponse = (path) => {
         const url = `https://lichess.org${path}`;
         return fetch(url, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${getToken()}`,
           },
         }).then((response) => {
           if (!response.ok) {
@@ -161,7 +159,7 @@ export const LichessProvider = ({ children }) => {
           const response = await fetch(url, {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${getToken()}`,
       
             },
           });
