@@ -1,9 +1,9 @@
 import React from "react";
 import './playContainer.css';
-import CustomChessboard from "../chessboard/chessboard";
-import ChessPGNBreadcrumbs from "../pgn/pgnArea";
-import DetectCorners from "../../backendAPI/detectCorners";
-import { LichessProvider } from "../../lichessAPI/lichessGame";
+import CustomChessboard from "../../chessboard/chessboard";
+import ChessPGNBreadcrumbs from "./pgn/pgnArea";
+import DetectCorners from "../../../backendAPI/detectCorners";
+import { LichessProvider } from "../../../lichessAPI/lichessGame";
 
 export default function PlayContainer({ setDetectedCorners }) {
 

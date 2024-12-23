@@ -2,7 +2,7 @@ import React from "react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { useChess } from "../../chessLogic/chessGame";
+import { useChess } from "../../../../chessLogic/chessGame";
 
 export default function ChessPGNBreadcrumbs() {
   const { getPgn, isAnalysisMode, goToMove } = useChess();

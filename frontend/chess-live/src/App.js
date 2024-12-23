@@ -1,14 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import './App.css';
-import ResponsiveAppBar from "./components/navbar/navbar";
-import PlayContainer from "./components/mainContent/playContainer";
-import SettingsInput from "./components/settings/settingsInput";
+import ResponsiveAppBar from "./components/layoutComponents/navbar/navbar";
+import SettingsInput from "./components/layoutComponents/settings/settingsInput";
 import { CaptureProvider } from './components/camera/captureContext';
 import { ChessProvider } from "./chessLogic/chessGame";
 import { SettingsProvider } from "./components/settings/settings";
-import WelcomePage from "./components/mainContent/welcomePage";
 import AppSnackbarProvider from "./components/alerts/customSnackbar";
+import WelcomePage from "./components/layoutComponents/start/welcomePage";
+import PlayContainer from "./components/layoutComponents/main/playContainer";
 
 
 function App() {

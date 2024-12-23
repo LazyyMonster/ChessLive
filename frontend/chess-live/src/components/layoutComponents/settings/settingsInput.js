@@ -1,5 +1,5 @@
 import React from "react";
-import { useSettings } from './settings';
+import { useSettings } from '../../settings/settings';
 
 export default function SettingsInput() {
   const {

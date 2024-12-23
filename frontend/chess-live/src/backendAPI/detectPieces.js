@@ -12,11 +12,10 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
     const { sendMove } = useLichess();
 
     const sendReq = async (image) => {
-        console.log("Detected corners:", detectedCorners);
         if (!detectedCorners) {
             showSnackbar(`Before starting the game, you must detect 4 corners.`, "error");
             setError("Corners not detected.");
-            onCornersError(); // Notify parent component
+            onCornersError();
             return;
         }
 
@@ -64,6 +63,9 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
                 (playerColor === "white" && prevTurn === "w") ||
                 (playerColor === "black" && prevTurn === "b");
 
+            console.log("Player color:", playerColor);
+            console.log("is my turn:", isPlayerTurn);
+            
             if (isPlayerTurn) {
                 const detectedMove = findMove(fenDetected);
                 if (detectedMove) {

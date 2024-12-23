@@ -4,10 +4,10 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import ChessRookIcon from '../icons/chessRookIcon.js';
+import ChessRookIcon from '../../icons/chessRookIcon.js';
 import { Link } from "react-router-dom";
-import LichessOAuth from '../../lichessAPI/lichessOAuth.js';
-import { useChess } from '../../chessLogic/chessGame.js';
+import LichessOAuth from '../../../lichessAPI/lichessOAuth.js';
+import { useChess } from '../../../chessLogic/chessGame.js';
 
 const pages = [
   { name: "Follow game offline", path: "/play", isOnline: false },

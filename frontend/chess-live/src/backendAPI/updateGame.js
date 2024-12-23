@@ -3,20 +3,27 @@ import { useCapture } from "../components/camera/captureContext";
 import DetectPieces from "./detectPieces";
 import Button from "@mui/material/Button";
 import { useSettings } from "../components/settings/settings";
+import { showSnackbar } from "../components/alerts/customSnackbar";
 
 export default function UpdateGame({ setFenDetected }) {
     const { capture } = useCapture();
     const [isCapturing, setIsCapturing] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
     const intervalRef = useRef(null);
-    const { detectFrequency } = useSettings();
+    const { detectFrequency, detectedCorners } = useSettings();
 
     const detectPosition = () => {
+        if (!detectedCorners) {
+            showSnackbar("You must detect corners first!", "warning");
+            return;
+        }
         if (isCapturing) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
             setIsCapturing(false);
+            showSnackbar("Detecting position stopped!", "info");
         } else {
+            showSnackbar("Detecting position started!", "success");
             setIsCapturing(true);
             intervalRef.current = setInterval(() => {
                 const image = capture();
