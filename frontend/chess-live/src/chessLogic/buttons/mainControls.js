@@ -5,19 +5,25 @@ import MenuItem from "@mui/material/MenuItem";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useChess } from "../chessGame";
 import { useLichess } from "../../lichessAPI/lichessGame";
+import { showSnackbar } from "../../components/alerts/customSnackbar";
 
 export default function MainControls() {
     const [games, setGames] = useState([]);
     const [selectedGameId, setSelectedGameId] = useState("");
     const [loading, setLoading] = useState(false);
-    const [gameMoves, setGameMoves] = useState([]);
 
     const { resetGame, loadPreviewGame } = useChess();
     const { fetchOngoingGames, lichessStreamGame, setGameId } = useLichess();
-    const {setGameFromLichess, makeMove, isPlayingOnline, setPlayerColor, getPgn } = useChess();
+    const { setGameFromLichess, makeMove, isPlayingOnline, setPlayerColor } = useChess();
 
+    const handleReset = () => {
+        resetGame();
+        showSnackbar("Board is ready!", "info");
+    }
     const handleLoadGames = async () => {
-        console.log('klik zaladuj gierki');
+        if (!localStorage.getItem("lichessToken")) {
+            showSnackbar("You must login to load games!", "warning");
+        }
         setLoading(true);
         try {
             const simplifiedGames = await fetchOngoingGames();
@@ -27,7 +33,7 @@ export default function MainControls() {
                 setGames([]);
             }
         } catch (error) {
-            console.error("Failed to fetch ongoing games:", error);
+            showSnackbar('Failed to fetch ongoing games!', 'error');
         } finally {
             setLoading(false);
         }
@@ -36,57 +42,47 @@ export default function MainControls() {
     const handleGameSelection = (gameId) => {
         setSelectedGameId(gameId);
         setGameId(gameId);
-        setGameMoves([]);
         let gameSetOnce = false;
-        let playerColor = null; 
-        let lastMoveCount = 0;
-    
+        let playerColor = null;
+
         lichessStreamGame((update) => {
             if (update.type === "gameFull") {
                 const moves = update.state?.moves ? update.state.moves.split(" ") : [];
                 const isWhitePlayer = update.white?.id !== undefined;
-    
+
                 playerColor = isWhitePlayer ? "white" : "black";
                 setPlayerColor(playerColor);
-    
-    
+
+
                 if (!gameSetOnce) {
                     gameSetOnce = true;
                     setGameFromLichess(moves);
                 }
-    
-                setGameMoves(moves);
-                lastMoveCount = moves.length;
             }
-    
+
             if (update.type === "gameState" && update.moves) {
                 const moves = update.moves.split(" ");
-                if (moves.length > lastMoveCount) {
-                    const newMove = moves[moves.length - 1];
+                const newMove = moves[moves.length - 1];
 
-                    const isOpponentTurn =
-                        (playerColor === "white" && moves.length % 2 === 0) ||
-                        (playerColor === "black" && moves.length % 2 !== 0);
-            
-            
-                    if (isOpponentTurn) {
-                        makeMove({
-                            from: newMove.slice(0, 2),
-                            to: newMove.slice(2, 4),
-                        });
-                    }
-        
-                    lastMoveCount = moves.length;
+                const isOpponentTurn =
+                    (playerColor === "white" && moves.length % 2 === 0) ||
+                    (playerColor === "black" && moves.length % 2 !== 0);
+
+
+                if (isOpponentTurn) {
+                    makeMove({
+                        from: newMove.slice(0, 2),
+                        to: newMove.slice(2, 4),
+                    });
                 }
-                setGameMoves(moves);
             }
         }, gameId);
     };
-    
+
     return (
         <>
             <div>
-                <Button variant="outlined" onClick={resetGame}>
+                <Button variant="outlined" onClick={handleReset}>
                     Reset Game
                 </Button>
                 <Button variant="outlined" onClick={loadPreviewGame}>

@@ -31,7 +31,7 @@ export const LichessProvider = ({ children }) => {
                 return null;
             }
 
-            const movesRegex = /\n\n([\d\s\w\.\-\+x]*)(?=\s*\*)/;
+            const movesRegex = /\n\n([\d\s\w.\-\x]*)(?=\s*\*)/;
             const match = pgn.match(movesRegex);
 
             if (match && match[1]) {
@@ -79,7 +79,6 @@ export const LichessProvider = ({ children }) => {
         }
     };
 
-    const [gameUpdates, setGameUpdates] = useState([]);
     // const activeStreams = useRef(new Set());
 
     const lichessStreamGame = (callback, gameId) => {

@@ -8,27 +8,30 @@ import { CaptureProvider } from './components/camera/captureContext';
 import { ChessProvider } from "./chessLogic/chessGame";
 import { SettingsProvider } from "./components/settings/settings";
 import WelcomePage from "./components/mainContent/welcomePage";
+import AppSnackbarProvider from "./components/alerts/customSnackbar";
 
 
 function App() {
   return (
     <Router>
-      <SettingsProvider>
-        <CaptureProvider>
-          <ChessProvider>
-            <ResponsiveAppBar />
-            <div className="content">
-              <Routes>
-                <Route path="/" element={<WelcomePage />} />
-                <Route path="/play" element={<PlayContainer />} />
-                <Route path="/playLichess" element={<PlayContainer />} />
-                <Route path="/settings" element={<SettingsInput />} />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </div>
-          </ChessProvider>
-        </CaptureProvider>
-      </SettingsProvider>
+      <AppSnackbarProvider>
+        <SettingsProvider>
+          <CaptureProvider>
+            <ChessProvider>
+              <ResponsiveAppBar />
+              <div className="content">
+                <Routes>
+                  <Route path="/" element={<WelcomePage />} />
+                  <Route path="/play" element={<PlayContainer />} />
+                  <Route path="/playLichess" element={<PlayContainer />} />
+                  <Route path="/settings" element={<SettingsInput />} />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </div>
+            </ChessProvider>
+          </CaptureProvider>
+        </SettingsProvider>
+      </AppSnackbarProvider>
     </Router>
   );
 }

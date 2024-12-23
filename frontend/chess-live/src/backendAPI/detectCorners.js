@@ -5,6 +5,7 @@ import CanvasOverlay from "../components/camera/canvasOverlay";
 import { useSettings } from "../components/settings/settings";
 import CameraView from "../components/camera/cameraView";
 import Button from "@mui/material/Button";
+import { showSnackbar } from "../components/alerts/customSnackbar";
 
 export default function DetectCorners() {
   const { capture, setWebcamRef } = useCapture();
@@ -47,6 +48,13 @@ export default function DetectCorners() {
         });
 
         const detectedCorners = response.data.corners || [];
+        const cornerKeys = Object.keys(detectedCorners);
+        if (cornerKeys.length !== 4) {
+          showSnackbar("Try again detecting corners!", "error");
+        }
+        else {
+          showSnackbar("Succesfully detected 4 corners!", "success");
+        }
         setError(null);
 
         setDetectedCorners(detectedCorners);

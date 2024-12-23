@@ -4,34 +4,26 @@ import DetectPieces from "./detectPieces";
 import Button from "@mui/material/Button";
 import { useSettings } from "../components/settings/settings";
 
-
-export default function UpdateGame({ setFenDetected })  {
+export default function UpdateGame({ setFenDetected }) {
     const { capture } = useCapture();
     const [isCapturing, setIsCapturing] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
     const intervalRef = useRef(null);
-    const [isValidStart, setIsValidStart] = useState(true);
     const { detectFrequency } = useSettings();
 
-
     const detectPosition = () => {
-        if (!isValidStart) {
-            console.log("not valid starting position")
-        }
-        else {
-            if (isCapturing) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-                setIsCapturing(false);
-            } else {
-                setIsCapturing(true);
-                intervalRef.current = setInterval(() => {
-                    const image = capture();
-                    if (image) {
-                        setCapturedImage(image);
-                    }
-                }, detectFrequency);
-            }
+        if (isCapturing) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            setIsCapturing(false);
+        } else {
+            setIsCapturing(true);
+            intervalRef.current = setInterval(() => {
+                const image = capture();
+                if (image) {
+                    setCapturedImage(image);
+                }
+            }, detectFrequency);
         }
     };
 

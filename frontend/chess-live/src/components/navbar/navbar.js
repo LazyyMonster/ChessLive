@@ -16,7 +16,7 @@ const pages = [
 ];
 
 export default function ResponsiveAppBar() {
-  const { token, username, profileUrl, lichessLogin, lichessLogout } = LichessOAuth();
+  const { isAuthorized, username, profileUrl, lichessLogin, lichessLogout } = LichessOAuth();
   const { setIsPlayingOnline } = useChess();
 
   const handleButtonClick = (isOnline) => {
@@ -59,7 +59,7 @@ export default function ResponsiveAppBar() {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {token ? (
+            {isAuthorized ? (
               <>
                 <Box sx={{ mr: 2, color: 'white', fontWeight: 600 }}>
                   <a

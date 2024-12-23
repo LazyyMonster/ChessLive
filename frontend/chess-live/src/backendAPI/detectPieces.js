@@ -1,22 +1,25 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSettings } from "../components/settings/settings";
 import { useChess } from "../chessLogic/chessGame";
 import { useLichess } from "../lichessAPI/lichessGame";
+import { showSnackbar } from "../components/alerts/customSnackbar";
 
-export default function DetectPieces({ image, setFenDetected }) {
+export default function DetectPieces({ image, setFenDetected, onCornersError }) {
     const { detectedCorners, piecesConf } = useSettings();
     const [error, setError] = useState(null);
     const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, playerColor, getFen, lastMove } = useChess();
     const { sendMove } = useLichess();
 
-    useEffect(() => {
-        if (image) {
-            sendReq(image);
-        }
-    }, [image]);
-
     const sendReq = async (image) => {
+        console.log("Detected corners:", detectedCorners);
+        if (!detectedCorners) {
+            showSnackbar(`Before starting the game, you must detect 4 corners.`, "error");
+            setError("Corners not detected.");
+            onCornersError(); // Notify parent component
+            return;
+        }
+
         if (!image) {
             setError("No image available for detection.");
             return;
@@ -57,7 +60,8 @@ export default function DetectPieces({ image, setFenDetected }) {
             }
 
             const prevTurn = getFen().split(" ")[1];
-            const isPlayerTurn = (playerColor === "white" && prevTurn === "w") ||
+            const isPlayerTurn =
+                (playerColor === "white" && prevTurn === "w") ||
                 (playerColor === "black" && prevTurn === "b");
 
             if (isPlayerTurn) {
@@ -68,11 +72,41 @@ export default function DetectPieces({ image, setFenDetected }) {
                 }
             }
 
+            handleMove(fenDetected);
         } catch (err) {
             console.error("Error:", err.response?.data || err.message);
             setError(err.response?.data?.detail || "An error occurred while detecting pieces.");
         }
     };
+
+    const handleMove = useCallback((fenDetected) => {
+        if (!isPlayingOnline) {
+            const detectedMove = findMove(fenDetected);
+            if (detectedMove) {
+                makeMove(detectedMove);
+            }
+            return;
+        }
+
+        const prevTurn = getFen().split(" ")[1];
+        const isPlayerTurn =
+            (playerColor === "white" && prevTurn === "w") ||
+            (playerColor === "black" && prevTurn === "b");
+
+        if (isPlayerTurn) {
+            const detectedMove = findMove(fenDetected);
+            if (detectedMove) {
+                const playerMove = returnAndMakeMove(detectedMove);
+                sendMove(playerMove);
+            }
+        }
+    }, [isPlayingOnline, findMove, makeMove, getFen, playerColor, sendMove, returnAndMakeMove]);
+
+    useEffect(() => {
+        if (image) {
+            sendReq(image);
+        }
+    }, [image, detectedCorners, piecesConf]);
 
     return error ? <p className="error">{error}</p> : null;
 }

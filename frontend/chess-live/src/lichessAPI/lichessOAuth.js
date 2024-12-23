@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce';
-import { useNavigate } from 'react-router-dom';
+import { showSnackbar } from '../components/alerts/customSnackbar';
 
 const lichessHost = 'https://lichess.org';
 const scopes = ["study:write", "study:read", "challenge:read", "bot:play", "board:play"];
@@ -42,11 +42,11 @@ const fetchBody = async (token, path, options = {}) => {
 
 
 export default function LichessOAuth() {
-  const [token, setToken] = useState(localStorage.getItem("lichessToken") || null);
+  const [isAuthorized, setIsAuthorized] = useState(localStorage.getItem('isAuthorized') || false);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [username, setUsername] = useState('');
   const [profileUrl, setProfileUrl] = useState('');
   const isProcessingAuth = useRef(false);
-  const navigate = useNavigate();
 
   const getOauth = () => {
     return new OAuth2AuthCodePKCE({
@@ -62,24 +62,25 @@ export default function LichessOAuth() {
 
   const lichessLogin = () => {
     const oauth = getOauth();
-    localStorage.removeItem('oauth2authcodepkce-state'); // Remove previous state
+    localStorage.removeItem('oauth2authcodepkce-state');
     oauth.fetchAuthorizationCode();
   };
 
   const lichessLogout = () => {
-    setToken(null);
     setUsername('');
     setProfileUrl('');
     localStorage.removeItem('lichessToken');
+    localStorage.removeItem('isAuthorized');
     localStorage.removeItem('oauth2authcodepkce-state');
+    setIsAuthorized(false);
+    showSnackbar("Succesfully logout!", "success");
   };
 
   const checkAuthStatus = async () => {
-    if (isProcessingAuth.current || localStorage.getItem('authInProgress')) return;
+    if (isProcessingAuth.current) return;
   
     try {
       isProcessingAuth.current = true;
-      localStorage.setItem('authInProgress', 'true');
   
       const oauth = getOauth();
       const isReturning = await oauth.isReturningFromAuthServer();
@@ -90,29 +91,39 @@ export default function LichessOAuth() {
   
         if (!newToken) throw new Error('Access token is missing or invalid.');
   
-        setToken(newToken);
+        setIsAuthorized(true);
         localStorage.setItem('lichessToken', newToken);
-        localStorage.removeItem('authInProgress');
+        localStorage.setItem('isAuthorized', true);
+
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState(null, '', cleanUrl);
       }
     } catch (err) {
       console.error('Authentication Error:', err.message);
     } finally {
+      setIsAuthChecked(true);
       isProcessingAuth.current = false;
-      localStorage.removeItem('authInProgress');
     }
   };
   
   useEffect(() => {
-    if (!token) checkAuthStatus();
-    else {
-      fetchLichessAccount(token).then((account) => {
+    if (!isAuthChecked) {
+      checkAuthStatus();
+    }
+  }, [isAuthChecked]);
+
+  useEffect(() => {
+    if (isAuthorized && isAuthChecked) {
+      fetchLichessAccount(localStorage.getItem('lichessToken')).then((account) => {
         if (account) {
           setUsername(account.username);
           setProfileUrl(account.url);
+        } else {
+          showSnackbar("Failed to fetch account information.", "error");
         }
       });
     }
-  }, [token]);
+  }, [isAuthorized, isAuthChecked]);
 
-  return { token, username, profileUrl, lichessLogin, lichessLogout };
+  return { isAuthorized, username, profileUrl, lichessLogin, lichessLogout };
 }
