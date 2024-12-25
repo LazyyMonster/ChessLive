@@ -10,7 +10,6 @@ import AppSnackbarProvider from "./components/alerts/customSnackbar";
 import WelcomePage from "./components/layoutComponents/start/welcomePage";
 import PlayContainer from "./components/layoutComponents/main/playContainer";
 
-
 function App() {
   return (
     <Router>
@@ -18,7 +17,7 @@ function App() {
         <SettingsProvider>
           <CaptureProvider>
             <ChessProvider>
-              <ResponsiveAppBar />
+              <ResponsiveAppBar className="navbar" />
               <div className="content">
                 <Routes>
                   <Route path="/" element={<WelcomePage />} />

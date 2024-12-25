@@ -1,35 +1,24 @@
-.App {
-  width: 100vw;
-  height: 100vh;
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
 }
 
-.Container {
+#root {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0 10px;
 }
 
-img {
-  height: 400px;
-  width: 400px;
-  object-fit: cover;
-}
-
-button {
-  background-color: crimson;
-  color: #fff;
-  margin-top: 10px;
-  padding: 10px 40px;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
+.navbar {
+  flex: 0 0 auto;
 }
 
 .content {
-
+  flex: 1 1 auto;
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 100vw;
+  overflow: hidden;
 }

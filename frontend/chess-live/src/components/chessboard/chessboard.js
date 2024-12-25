@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import UpdateGame from "../../backendAPI/updateGame";
 import LiveChessboard from "./detectedBoard";
-import MainControls from "../../chessLogic/buttons/mainControls";
+import MainControls from "../layoutComponents/buttons/mainControls";
 
 
 export default function CustomChessboard() {

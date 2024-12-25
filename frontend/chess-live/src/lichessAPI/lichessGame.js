@@ -79,77 +79,91 @@ export const LichessProvider = ({ children }) => {
         }
     };
 
-    // const activeStreams = useRef(new Set());
-
     const lichessStreamGame = (callback, gameId) => {
-        const path = `/api/board/game/stream/${gameId}`;
-      
-        fetchResponse(path)
-          .then(readStream(callback))
+      const path = `/api/board/game/stream/${gameId}`;
+      const controller = new AbortController();
+      const { signal } = controller;
+  
+      fetchResponse(path, signal)
+          .then(readStream(callback, signal))
           .catch((error) => {
-            console.error(`Error starting game stream for game ${gameId}:`, error);
+              if (error.name === "AbortError") {
+                  console.log(`Stream for game ${gameId} aborted.`);
+              } else {
+                  console.error(`Error starting game stream for game ${gameId}:`, error);
+              }
           });
+  
+      return () => {
+          controller.abort();
       };
-      
-      const readStream = (processLine) => (response) => {
-        const stream = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-      
-        const lineSeparator = /\r?\n/;
-      
-        const processStream = () =>
+  };
+  
+  const readStream = (processLine, signal) => (response) => {
+      const stream = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+  
+      const lineSeparator = /\r?\n/;
+  
+      const processStream = () =>
           stream.read().then(({ done, value }) => {
-            if (done) {
-              // Process any leftover buffered data
-              if (buffer.length > 0) {
-                try {
-                  processLine(JSON.parse(buffer));
-                } catch (error) {
-                  console.error("Error processing leftover data:", buffer, error);
-                }
+              if (done) {
+                  if (buffer.length > 0) {
+                      try {
+                          processLine(JSON.parse(buffer));
+                      } catch (error) {
+                          console.error("Error processing leftover data:", buffer, error);
+                      }
+                  }
+                  return;
               }
-              return; // Stream has ended
-            }
-      
-            const chunk = decoder.decode(value, { stream: true });
-            buffer += chunk;
-      
-            // Split buffer into complete lines and process each line
-            const lines = buffer.split(lineSeparator);
-            buffer = lines.pop(); // Keep the last incomplete line in the buffer
-      
-            for (const line of lines) {
-              if (line) {
-                try {
-                  processLine(JSON.parse(line));
-                } catch (error) {
-                  console.error("Error processing line:", line, error);
-                }
+  
+              const chunk = decoder.decode(value, { stream: true });
+              buffer += chunk;
+  
+              const lines = buffer.split(lineSeparator);
+              buffer = lines.pop();
+  
+              for (const line of lines) {
+                  if (line) {
+                      try {
+                          processLine(JSON.parse(line));
+                      } catch (error) {
+                          console.error("Error processing line:", line, error);
+                      }
+                  }
               }
-            }
-      
-            // Continue reading the stream
-            return processStream();
+
+              if (!signal.aborted) {
+                  return processStream();
+              }
+          }).catch((error) => {
+              if (error.name === "AbortError") {
+                  console.log("Stream read operation was aborted.");
+              } else {
+                  console.error("Error reading stream:", error);
+              }
           });
-      
-        processStream();
-      };
-      
-      const fetchResponse = (path) => {
-        const url = `https://lichess.org${path}`;
-        return fetch(url, {
+  
+      processStream();
+  };
+  
+  const fetchResponse = (path, signal) => {
+      const url = `https://lichess.org${path}`;
+      return fetch(url, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${getToken()}`,
+              Authorization: `Bearer ${getToken()}`,
           },
-        }).then((response) => {
+          signal,
+      }).then((response) => {
           if (!response.ok) {
-            throw new Error(`Failed to fetch from ${url}: ${response.statusText}`);
+              throw new Error(`Failed to fetch from ${url}: ${response.statusText}`);
           }
           return response;
-        });
-      };
+      });
+  };
 
       const sendMove = async (move) => {
         const url = `https://lichess.org/api/board/game/${gameId}/move/${move}`;
@@ -175,7 +189,6 @@ export const LichessProvider = ({ children }) => {
         }
       };
       
-
     return (
         <LichessContext.Provider
             value={{
