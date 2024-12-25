@@ -281,6 +281,10 @@ async def fen_from_image(
 
         pieces, boxes = detect_pieces(transformed_image, pieces_conf)
 
+        # Handle case where no pieces are detected
+        if len(pieces) == 0:
+            return {"fen": "8/8/8/8/8/8/8/8"}  # Return empty board FEN
+
         fen = make_fen(pieces, boxes, transformed_image)
 
         return {"fen": fen}
