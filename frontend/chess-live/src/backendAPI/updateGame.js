@@ -1,16 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useCapture } from "../components/camera/captureContext";
 import DetectPieces from "./detectPieces";
 import Button from "@mui/material/Button";
 import { useSettings } from "../components/settings/settings";
 import { showSnackbar } from "../components/alerts/customSnackbar";
+import { useGlobalVariables } from "../globalVariables/globalVariables";
 
 export default function UpdateGame({ setFenDetected }) {
     const { capture } = useCapture();
-    const [isCapturing, setIsCapturing] = useState(false);
+    const { isCapturing, setIsCapturing } = useGlobalVariables();
+    const { detectFrequency, detectedCorners } = useSettings();
     const [capturedImage, setCapturedImage] = useState(null);
     const intervalRef = useRef(null);
-    const { detectFrequency, detectedCorners } = useSettings();
 
     const detectPosition = () => {
         if (!detectedCorners) {
@@ -33,6 +34,17 @@ export default function UpdateGame({ setFenDetected }) {
             }, detectFrequency);
         }
     };
+
+    useEffect(() => {
+        // stop detection when not in play pages
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+            setIsCapturing(false);
+        };
+    }, []);
+    
 
     return (
         <>

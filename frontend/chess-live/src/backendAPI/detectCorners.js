@@ -9,7 +9,7 @@ import { showSnackbar } from "../components/alerts/customSnackbar";
 
 export default function DetectCorners() {
   const { capture, setWebcamRef } = useCapture();
-  const { cornerConf, setDetectedCorners } = useSettings();
+  const { cornersConf, setDetectedCorners } = useSettings();
   const [error, setError] = useState(null);
 
   const handleCapture = () => {
@@ -40,7 +40,7 @@ export default function DetectCorners() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const url = `http://127.0.0.1:8000/detect_corners/?corner_conf=${cornerConf}`;
+        const url = `http://127.0.0.1:8000/detect_corners/?corner_conf=${cornersConf}`;
         const response = await axios.post(url, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -65,7 +65,7 @@ export default function DetectCorners() {
         );
       }
     },
-    [cornerConf, setDetectedCorners]
+    [cornersConf, setDetectedCorners]
   );
 
   return (

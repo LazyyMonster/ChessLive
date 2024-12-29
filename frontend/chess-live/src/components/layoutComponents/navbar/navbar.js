@@ -7,11 +7,11 @@ import Button from '@mui/material/Button';
 import ChessRookIcon from '../../icons/chessRookIcon.js';
 import { Link } from "react-router-dom";
 import LichessOAuth from '../../../lichessAPI/lichessOAuth.js';
-import { useChess } from '../../../chessLogic/chessGame.js';
+import { useChess } from '../../../chessGame/chessGame.js';
 
 const pages = [
   { name: "Follow game offline", path: "/play", isOnline: false },
-  { name: "Play on Lichess", path: "/playLichess", isOnline: true },
+  { name: "Play with Lichess", path: "/playLichess", isOnline: true },
   { name: "Settings", path: "/settings" }
 ];
 

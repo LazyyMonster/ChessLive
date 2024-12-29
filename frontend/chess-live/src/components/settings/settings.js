@@ -1,19 +1,18 @@
 import React, { createContext, useState, useContext, useMemo } from 'react';
-import { DETECT_FREQUENCY } from './constants';
+import { CORNERS_CONFIDENCE, DETECT_FREQUENCY, PIECES_CONFIDENCE } from './constants';
 
 
 const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
-    const [cornerConf, setCornerConf] = useState(0.5);
-    const [piecesConf, setPiecesConf] = useState(0.5);
+    const [cornersConf, setCornersConf] = useState(CORNERS_CONFIDENCE);
+    const [piecesConf, setPiecesConf] = useState(PIECES_CONFIDENCE);
     const [detectedCorners, setDetectedCorners] = useState(null);
     const [detectFrequency, setDetectFrequency] = useState(DETECT_FREQUENCY);
-    // const [followMode, setFollowMode] = useState('offline'); //offline 2 players irl, lichess 1 player with lichess opponent
 
     const resetConfidences = () => {
-        setCornerConf(0.5);
-        setPiecesConf(0.5);
+        setCornersConf(CORNERS_CONFIDENCE);
+        setPiecesConf(PIECES_CONFIDENCE);
     };
 
     const resetDetectFrequency = () => {
@@ -21,8 +20,8 @@ export const SettingsProvider = ({ children }) => {
     }
 
     const value = useMemo(() => ({
-        cornerConf,
-        setCornerConf,
+        cornersConf,
+        setCornersConf,
         piecesConf,
         setPiecesConf,
         resetConfidences,
@@ -31,7 +30,7 @@ export const SettingsProvider = ({ children }) => {
         detectFrequency,
         setDetectFrequency,
         resetDetectFrequency,
-    }), [cornerConf, piecesConf, detectedCorners, detectFrequency]);
+    }), [cornersConf, piecesConf, detectedCorners, detectFrequency]);
 
     return (
         <SettingsContext.Provider value={value}>

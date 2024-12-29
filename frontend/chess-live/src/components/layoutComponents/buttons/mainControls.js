@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useChess } from "../../../chessLogic/chessGame";
+import { useChess } from "../../../chessGame/chessGame";
 import { useLichess } from "../../../lichessAPI/lichessGame";
 import { showSnackbar } from "../../alerts/customSnackbar";
 
@@ -49,7 +49,6 @@ export default function MainControls() {
         }
         setSelectedGameId(gameId);
         setGameId(gameId);
-        let gameSetOnce = false;
         let playerColor = null;
 
         stopStreamRef.current = lichessStreamGame((update) => {
@@ -59,11 +58,7 @@ export default function MainControls() {
 
                 playerColor = isWhitePlayer ? "white" : "black";
                 setPlayerColor(playerColor);
-
-                if (!gameSetOnce) {
-                    gameSetOnce = true;
-                    setGameFromLichess(moves);
-                }
+                setGameFromLichess(moves);
             }
 
             if (update.type === "gameState" && update.moves) {

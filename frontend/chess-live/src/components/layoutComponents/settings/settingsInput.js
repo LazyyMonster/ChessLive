@@ -1,11 +1,12 @@
 import React from "react";
 import { useSettings } from "../../settings/settings";
 import "./settingsInput.css";
+import { CORNERS_CONFIDENCE, DETECT_FREQUENCY, PIECES_CONFIDENCE } from "../../settings/constants";
 
 export default function SettingsInput() {
   const {
-    cornerConf,
-    setCornerConf,
+    cornersConf,
+    setCornersConf,
     piecesConf,
     setPiecesConf,
     resetConfidences,
@@ -17,13 +18,13 @@ export default function SettingsInput() {
   return (
     <div className="settings-input-container">
       <div className="settings-input-group">
-        <label className="settings-input-label">Corner Confidence:</label>
+        <label className="settings-input-label">Corners Confidence:</label>
         <input
           type="number"
-          value={cornerConf || 0.5}
+          value={cornersConf || CORNERS_CONFIDENCE}
           onChange={(e) => {
             const value = parseFloat(e.target.value);
-            if (!isNaN(value) && value >= 0 && value <= 1) setCornerConf(value);
+            if (!isNaN(value) && value >= 0 && value <= 1) setCornersConf(value);
           }}
           step="0.05"
           min="0"
@@ -35,7 +36,7 @@ export default function SettingsInput() {
         <label className="settings-input-label">Pieces Confidence:</label>
         <input
           type="number"
-          value={piecesConf || 0.5}
+          value={piecesConf || PIECES_CONFIDENCE}
           onChange={(e) => {
             const value = parseFloat(e.target.value);
             if (!isNaN(value) && value >= 0 && value <= 1) setPiecesConf(value);
@@ -50,7 +51,7 @@ export default function SettingsInput() {
         <label className="settings-input-label">Detect Frequency (ms):</label>
         <input
           type="number"
-          value={detectFrequency || 2000}
+          value={detectFrequency || DETECT_FREQUENCY}
           onChange={(e) => {
             const value = parseInt(e.target.value, 10);
             if (!isNaN(value) && value > 0) setDetectFrequency(value);

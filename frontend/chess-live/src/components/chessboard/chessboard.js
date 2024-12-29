@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Chessboard } from "react-chessboard";
-import { useChess } from "../../chessLogic/chessGame";
+import { useChess } from "../../chessGame/chessGame";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import UpdateGame from "../../backendAPI/updateGame";
 import LiveChessboard from "./detectedBoard";
 import MainControls from "../layoutComponents/buttons/mainControls";
+import { ANIMATION_DURATION, BOARD_SIZE, HIGHLIGHTING_SQUARE_COLOR } from "../settings/constants";
 
 
 export default function CustomChessboard() {
@@ -26,8 +27,8 @@ export default function CustomChessboard() {
     if (!lastMove) return {};
     const { from, to } = lastMove;
     return {
-      [from]: { backgroundColor: "rgba(255, 190, 0, 0.5)" },
-      [to]: { backgroundColor: "rgba(255, 190, 0, 0.5)" },
+      [from]: { backgroundColor: HIGHLIGHTING_SQUARE_COLOR },
+      [to]: { backgroundColor: HIGHLIGHTING_SQUARE_COLOR },
     };
   };
 
@@ -35,13 +36,13 @@ export default function CustomChessboard() {
     <>
       <div className="CustomBoard">
         <h1>{isAnalysisMode ? "Analysis Mode" : "Live Position"}</h1>
-        <Chessboard position={fen} boardWidth={500} customSquareStyles={highlightLastMove()} arePiecesDraggable={false} animationDuration={200} />
+        <Chessboard position={fen} boardWidth={BOARD_SIZE} customSquareStyles={highlightLastMove()} arePiecesDraggable={false} animationDuration={ANIMATION_DURATION} />
         <Stack direction="row" spacing={2} sx={{ marginTop: "16px" }}>
           <Button
             variant="contained"
             onClick={toggleAnalysisMode}
           >
-            {isAnalysisMode ? "Return To Live Mode" : "Enable Analysis Mode"}
+            {isAnalysisMode ? "Return To Live" : "Enable Analysis"}
           </Button>
           {!isAnalysisMode && <UpdateGame setFenDetected={setFenDetected} />}
           {isAnalysisMode && (

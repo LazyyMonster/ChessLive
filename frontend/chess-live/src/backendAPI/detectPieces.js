@@ -1,14 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
 import { useSettings } from "../components/settings/settings";
-import { useChess } from "../chessLogic/chessGame";
+import { useChess } from "../chessGame/chessGame";
 import { useLichess } from "../lichessAPI/lichessGame";
 import { showSnackbar } from "../components/alerts/customSnackbar";
 
 export default function DetectPieces({ image, setFenDetected, onCornersError }) {
     const { detectedCorners, piecesConf } = useSettings();
     const [error, setError] = useState(null);
-    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, playerColor, getFen, lastMove } = useChess();
+    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, playerColor, getFen } = useChess();
     const { sendMove } = useLichess();
 
     const sendReq = async (image) => {
@@ -63,9 +63,6 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
                 (playerColor === "white" && prevTurn === "w") ||
                 (playerColor === "black" && prevTurn === "b");
 
-            console.log("Player color:", playerColor);
-            console.log("is my turn:", isPlayerTurn);
-            
             if (isPlayerTurn) {
                 const detectedMove = findMove(fenDetected);
                 if (detectedMove) {

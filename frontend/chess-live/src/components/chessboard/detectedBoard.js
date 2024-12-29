@@ -1,6 +1,7 @@
 import React from "react";
 import { Chessboard } from "react-chessboard";
-import { useChess } from "../../chessLogic/chessGame";
+import { useChess } from "../../chessGame/chessGame";
+import { ANIMATION_DURATION, DIFFERENT_SQUARE_COLOR, LIVE_BOARD_SIZE } from "../settings/constants";
 
 const parseFen = (fen) => {
   const rows = fen.split(" ")[0].split("/");
@@ -30,7 +31,7 @@ const findDifferences = (fen1, fen2) => {
     for (let c = 0; c < 8; c++) {
       if (board1[r][c] !== board2[r][c]) {
         const square = `${String.fromCharCode(97 + c)}${8 - r}`;
-        differences[square] = { backgroundColor: "rgba(255, 0, 0, 0.5)" };
+        differences[square] = { backgroundColor: DIFFERENT_SQUARE_COLOR };
       }
     }
   }
@@ -48,9 +49,9 @@ export default function LiveChessboard({ fenDetected }) {
       <h1>Detected Pieces</h1>
       <Chessboard
         position={fenDetected || "8/8/8/8/8/8/8/8"}
-        boardWidth={250}
+        boardWidth={LIVE_BOARD_SIZE}
         arePiecesDraggable={false}
-        animationDuration={200}
+        animationDuration={ANIMATION_DURATION}
         customSquareStyles={squareStyles}
       />
     </>

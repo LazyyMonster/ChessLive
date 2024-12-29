@@ -175,24 +175,23 @@ export const ChessProvider = ({ children }) => {
     const isValid = (detectedFen === STARTING_POSITION)
   };
 
-
-
-  // Lichess games
-
+  // Lichess game setting
   const setGameFromLichess = (moves) => {  
     if (moves) {
+      analysisGame.reset();
+      game.reset();
       const updatedGame = game;
 
-      updatedGame.reset();
-  
       moves.forEach((move) => {
         try {
           updatedGame.move(move);
+          analysisGame.move(move);
         } catch (err) {
           console.error(`Invalid move received: ${move}`, err);
         }
       });
       setFenAndLastMove(updatedGame);
+      setCurrentMoveIndex(moves.length - 1);
     } else {
     }
   };
