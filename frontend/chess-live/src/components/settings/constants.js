@@ -20,6 +20,6 @@ export const ANIMATION_DURATION = 200;  // ms
 
 // api paths
 export const LICHESS_BASE_ENDPOINT = "https://lichess.org";
-export const REDIRECT_URL = "http://localhost:3000/playLichess";
+export const REDIRECT_URL = "http://localhost:3000/lichess";
 
 export const BACKEND_URL = "http://127.0.0.1:8000";

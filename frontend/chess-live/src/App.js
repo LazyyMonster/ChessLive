@@ -23,8 +23,8 @@ function App() {
                 <div className="content">
                   <Routes>
                     <Route path="/" element={<WelcomePage />} />
-                    <Route path="/play" element={<PlayContainer />} />
-                    <Route path="/playLichess" element={<PlayContainer />} />
+                    <Route path="/offline" element={<PlayContainer />} />
+                    <Route path="/lichess" element={<PlayContainer />} />
                     <Route path="/settings" element={<SettingsInput />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
