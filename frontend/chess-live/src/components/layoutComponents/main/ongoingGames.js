@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useLichess } from "../../lichessAPI/lichessGame";
 
 const OngoingGames = () => {
-  const { fetchOngoingGames, setGameFromLichess } = useLichess();
+  const { fetchOngoingGames } = useLichess();
   const [games, setGames] = useState([]);
-  const [selectedGameId, setSelectedGameId] = useState("");
+  const [selectedGameId, setSelectedGameId] = useState(null);
 
   const handleLoadGames = async () => {
     const ongoingGames = await fetchOngoingGames();

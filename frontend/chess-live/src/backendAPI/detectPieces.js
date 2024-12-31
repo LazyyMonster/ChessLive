@@ -4,6 +4,7 @@ import { useSettings } from "../components/settings/settings";
 import { useChess } from "../chessGame/chessGame";
 import { useLichess } from "../lichessAPI/lichessGame";
 import { showSnackbar } from "../components/alerts/customSnackbar";
+import { BACKEND_URL } from "../components/settings/constants";
 
 export default function DetectPieces({ image, setFenDetected, onCornersError }) {
     const { detectedCorners, piecesConf } = useSettings();
@@ -14,7 +15,6 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
     const sendReq = async (image) => {
         if (!detectedCorners) {
             showSnackbar(`Before starting the game, you must detect 4 corners.`, "error");
-            setError("Corners not detected.");
             onCornersError();
             return;
         }
@@ -37,7 +37,7 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
             };
             formData.append("data", JSON.stringify(body));
             const response = await axios.post(
-                `http://127.0.0.1:8000/fen_from_image/`,
+                `${BACKEND_URL}/fen_from_image/`,
                 formData,
                 {
                     headers: {
