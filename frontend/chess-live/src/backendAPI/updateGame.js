@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import { useSettings } from "../components/settings/settings";
 import { showSnackbar } from "../components/alerts/customSnackbar";
 import { useGlobalVariables } from "../globalVariables/globalVariables";
+import { useChess } from "../chessGame/chessGame";
 
 export default function UpdateGame({ setFenDetected }) {
     const { capture } = useCapture();
@@ -12,8 +13,17 @@ export default function UpdateGame({ setFenDetected }) {
     const { detectFrequency, detectedCorners } = useSettings();
     const [capturedImage, setCapturedImage] = useState(null);
     const intervalRef = useRef(null);
+    const { isGameOver, gameOverReason, result } = useChess();
 
     const detectPosition = () => {
+        if (isGameOver()) {
+            const reason = gameOverReason();
+            showSnackbar(reason, "info");
+            setIsCapturing(false);
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            return;
+        }
         if (!detectedCorners) {
             showSnackbar("You must detect corners first!", "warning");
             return;
@@ -31,12 +41,34 @@ export default function UpdateGame({ setFenDetected }) {
                 if (image) {
                     setCapturedImage(image);
                 }
+                // Stop detection if the game is over during interval execution
+                if (isGameOver()) {
+                    const reason = gameOverReason();
+                    showSnackbar(reason, "info");
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                    setIsCapturing(false);
+                }
             }, detectFrequency);
         }
     };
 
+
+    // Cleanup when result changes
     useEffect(() => {
-        // stop detection when not in play pages
+        if (result === "ongoing") {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+            setCapturedImage(null);
+            setIsCapturing(false);
+            // showSnackbar("result changes in update game!", "info");
+        }
+
+    }, [result]);
+
+    useEffect(() => {
         return () => {
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
@@ -44,7 +76,6 @@ export default function UpdateGame({ setFenDetected }) {
             setIsCapturing(false);
         };
     }, []);
-    
 
     return (
         <>

@@ -10,6 +10,7 @@ export const STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq 
 export const ChessProvider = ({ children }) => {
   //Live game variables
   const [game, setGame] = useState(new Chess(STARTING_FEN));
+  const [result, setResult] = useState(null);
 
   //Shared variable livae and analysis
   const [lastMove, setLastMove] = useState(null);
@@ -65,6 +66,7 @@ export const ChessProvider = ({ children }) => {
     setLastMove(null);
     setCurrentMoveIndex(-1);
     setIsAnalysisMode(false);
+    setResult("ongoing")
   };
 
   const getPgn = () => game.pgn();
@@ -178,8 +180,7 @@ export const ChessProvider = ({ children }) => {
   // Lichess game setting
   const setGameFromLichess = (moves) => {  
     if (moves) {
-      analysisGame.reset();
-      game.reset();
+      resetGame();
       const updatedGame = game;
 
       moves.forEach((move) => {
@@ -192,8 +193,42 @@ export const ChessProvider = ({ children }) => {
       });
       setFenAndLastMove(updatedGame);
       setCurrentMoveIndex(moves.length - 1);
-    } else {
     }
+  };
+
+  // check if the game has ended
+  const isGameOver = () => {
+    return game.isGameOver();
+  };
+
+  // check why the game has ended
+  const gameOverReason = () => {
+    if (game.isCheckmate()) {
+      setResult("checkmate");
+      return "checkmate";
+    }
+    // // It was added recently not in npm package
+    // if (game.isDrawByFiftyMoves()) {
+    //   setResult("draw by 50 moves");
+    //   return "draw by 50 moves";
+    // }
+    if (game.isInsufficientMaterial()) {
+      setResult("insufficient material");
+      return "insufficient material";
+    }
+    if (game.isThreefoldRepetition()) {
+      setResult("threefold repetition");
+      return "threefold repetition";
+    }
+    if (game.isStalemate()) {
+      setResult("stalemate");
+      return "stalemate";
+    }
+    if (game.isDraw()) {
+      setResult("draw");
+      return "draw";
+    }
+    return;
   };
   
 
@@ -230,6 +265,9 @@ export const ChessProvider = ({ children }) => {
         playerColor,
         setPlayerColor,
         returnAndMakeMove,
+        isGameOver,
+        gameOverReason,
+        result,
       }}
     >
       {children}

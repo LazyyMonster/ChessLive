@@ -1,14 +1,16 @@
 .settings-input-container {
-    max-width: 300px;
-    margin: 0 auto;
+    
+    /* margin: 0 auto; */
+    align-items: center;
   }
   
   .settings-input-group {
+    max-width: 300px;
     margin-bottom: 1rem;
   }
   
   .settings-input-label {
-    display: block;
+    /* display: block; */
     margin-bottom: 0.5rem;
   }
   
@@ -28,19 +30,19 @@
   }
   
   .settings-input-button.reset-confidences {
-    background-color: #007bff;
+    background-color: #0000ff;
     color: #fff;
     margin-right: 0.5rem;
   }
   
   .settings-input-button.reset-frequency {
-    background-color: #28a745;
+    background-color: #0000ff;
     color: #fff;
     margin-right: 0.5rem;
   }
   
   .settings-input-button.reset-all {
-    background-color: #ffc107;
+    background-color: #0000ff;
     color: #fff;
   }
   
