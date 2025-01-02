@@ -2,6 +2,7 @@ import React from "react";
 import { Chessboard } from "react-chessboard";
 import { useChess } from "../../chessGame/chessGame";
 import { ANIMATION_DURATION, DIFFERENT_SQUARE_COLOR, LIVE_BOARD_SIZE } from "../settings/constants";
+import { Stack } from "@mui/material";
 
 const parseFen = (fen) => {
   const rows = fen.split(" ")[0].split("/");
@@ -47,13 +48,15 @@ export default function LiveChessboard({ fenDetected }) {
   return (
     <>
       <h1>Detected Pieces</h1>
-      <Chessboard
-        position={fenDetected || "8/8/8/8/8/8/8/8"}
-        boardWidth={LIVE_BOARD_SIZE}
-        arePiecesDraggable={false}
-        animationDuration={ANIMATION_DURATION}
-        customSquareStyles={squareStyles}
-      />
+      <Stack direction="column" spacing={2} alignItems="center">
+        <Chessboard
+          position={fenDetected || "8/8/8/8/8/8/8/8"}
+          boardWidth={LIVE_BOARD_SIZE}
+          arePiecesDraggable={false}
+          animationDuration={ANIMATION_DURATION}
+          customSquareStyles={squareStyles}
+        />
+      </Stack>
     </>
   );
 }

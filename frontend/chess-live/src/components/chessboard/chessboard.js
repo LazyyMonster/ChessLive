@@ -64,8 +64,10 @@ export default function CustomChessboard() {
         </Stack>
       </div>
       <div className="LiveBoard">
-        <LiveChessboard fenDetected={fenDetected} />
-        <MainControls></MainControls>
+        <Stack direction="column" spacing={2} alignItems="center">
+          <LiveChessboard fenDetected={fenDetected} />
+          <MainControls></MainControls>
+        </Stack>
       </div>
     </>
   );
