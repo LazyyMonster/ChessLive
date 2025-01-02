@@ -5,11 +5,14 @@ const GlobalVariablesContext = createContext();
 
 export const GlobalVariablesProvider = ({ children }) => {
     const [isCapturing, setIsCapturing] = useState(false);
+    const [selectedGameId, setSelectedGameId] = useState('');
 
     const value = useMemo(() => ({
         isCapturing,
         setIsCapturing,
-    }), [isCapturing]);
+        selectedGameId,
+        setSelectedGameId,
+    }), [isCapturing, selectedGameId]);
 
     return (
         <GlobalVariablesContext.Provider value={value}>
