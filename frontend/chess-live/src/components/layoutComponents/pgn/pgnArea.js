@@ -1,5 +1,4 @@
 import React from "react";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useChess } from "../../../chessGame/chessGame";
@@ -18,55 +17,116 @@ export default function ChessPGNBreadcrumbs() {
   };
 
   return (
-    <div>
-      <h1>PGN</h1>
-      <Breadcrumbs className="pgnArea" aria-label="chess moves" separator="">
-        {moves.map((move, index) => {
-          const isWhiteMove = index % 2 === 0;
-          const moveNumber = Math.floor(index / 2) + 1;
+    <div
+      style={{
+      
+        backgroundColor: "#f9f9f9",
+        height: "100%",
+        width: "100%"
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: "bold",
+          mb: 2,
+          textAlign: "center",
+          position: "sticky",
+          top: "0",
+          backgroundColor: "#f9f9f9",
+          zIndex: "1",
+          paddingTop: "20px",
+        }}
+      >
+        PGN
+      </Typography>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          style={{
+            paddingLeft: "20px",
+            paddingRight: "20px",
+            display: "flex",
+            flexDirection: "row",
+            gap: "8px",
+            flexWrap: "wrap",
+            overflowY: "auto",
+            maxHeight: "350px",
+          }}
+        >
+          {moves.map((move, index) => {
+            const moveNumber = Math.floor(index / 2) + 1;
+            const isWhiteMove = index % 2 === 0;
 
-          return isWhiteMove ? (
-            <span key={index}>
-              <Typography
-                color="textPrimary"
-                sx={{ display: "inline", marginRight: "4px" }}
-              >
-                {moveNumber}.
-              </Typography>
-              <Link
-                color="inherit"
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleMoveClick(index);
-                }}
-                sx={{
-                  textDecoration: isAnalysisMode ? "underline" : "none",
-                  cursor: isAnalysisMode ? "pointer" : "default",
+            return (
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  gap: "4px",
                 }}
               >
-                {move}
-              </Link>
-            </span>
-          ) : (
-            <Link
-              key={index}
-              color="inherit"
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleMoveClick(index);
-              }}
-              sx={{
-                textDecoration: isAnalysisMode ? "underline" : "none",
-                cursor: isAnalysisMode ? "pointer" : "default",
-              }}
-            >
-              {move}
-            </Link>
-          );
-        })}
-      </Breadcrumbs>
+                {isWhiteMove ? (
+                  <>
+                    {/* Move number */}
+                    <Typography
+                      color="textSecondary"
+                      sx={{ fontWeight: "bold", textAlign: "center" }}
+                    >
+                      {moveNumber}.
+                    </Typography>
+                    {/* White vove */}
+                    <Link
+                      color={isAnalysisMode ? "primary" : "inherit"}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleMoveClick(index);
+                      }}
+                      sx={{
+                        textDecoration: isAnalysisMode ? "underline" : "none",
+                        cursor: isAnalysisMode ? "pointer" : "default",
+                        "&:hover": {
+                          color: isAnalysisMode ? "secondary.main" : "inherit",
+                        },
+                      }}
+                    >
+                      {move}
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    {/* Black move */}
+                    <Link
+                      color={isAnalysisMode ? "primary" : "inherit"}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleMoveClick(index);
+                      }}
+                      sx={{
+                        textDecoration: isAnalysisMode ? "underline" : "none",
+                        cursor: isAnalysisMode ? "pointer" : "default",
+                        "&:hover": {
+                          color: isAnalysisMode ? "secondary.main" : "inherit",
+                        },
+                      }}
+                    >
+                      {move}
+                    </Link>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
