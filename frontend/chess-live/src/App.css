@@ -2,7 +2,6 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-
 }
 
 #root {
@@ -21,4 +20,6 @@ html, body, #root {
   align-items: center;
   width: 100vw;
   overflow: hidden;
+  background-color: #004346;
+  /* background-color: #006974; */
 }

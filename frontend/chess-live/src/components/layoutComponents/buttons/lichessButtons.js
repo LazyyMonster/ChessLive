@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
 import { useChess } from "../../../chessGame/chessGame";
 import { useLichess } from "../../../lichessAPI/lichessGame";
 import { showSnackbar } from "../../alerts/customSnackbar";
 import { useGlobalVariables } from "../../../globalVariables/globalVariables";
 
 export default function LichessButtons() {
+  const theme = useTheme();
   const [games, setGames] = useState([]);
   const { selectedGameId, setSelectedGameId } = useGlobalVariables();
   const [loading, setLoading] = useState(false);
@@ -88,19 +91,34 @@ export default function LichessButtons() {
   }, []);
 
   return (
-    <div style={{ maxWidth: "250px", margin: "0 auto", padding: "1rem" }}>
-      <h3>Choose game from Lichess</h3>
+    <div
+      style={{
+        maxWidth: "250px",
+        margin: "0 auto",
+        padding: "1rem",
+        // backgroundColor: theme.palette.background.paper,
+        // borderRadius: "8px",
+        // boxShadow: theme.shadows[1],
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{ color: theme.palette.primary.contrastText, marginBottom: "16px" }}
+      >
+        Load game from Lichess
+      </Typography>
 
       <Button
-        variant="outlined"
+        color="secondary"
+        variant="contained"
         onClick={handleLoadGames}
         disabled={loading}
-        style={{
+        sx={{
           width: "100%",
-          marginBottom: "1rem",
+          marginBottom: "16px",
         }}
       >
-        Load Ongoing Games
+        {loading ? "Loading..." : "Load Ongoing Games"}
       </Button>
 
       {games.length > 0 ? (
@@ -109,6 +127,16 @@ export default function LichessButtons() {
           onChange={(e) => handleGameSelection(e.target.value)}
           displayEmpty
           fullWidth
+          sx={{
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.primary,
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: theme.palette.primary.main,
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: theme.palette.primary.light,
+            },
+          }}
         >
           <MenuItem value="" disabled>
             Select a Game
@@ -120,10 +148,28 @@ export default function LichessButtons() {
           ))}
         </Select>
       ) : (
-        !loading && <p>No games available, please start a game on Lichess and reload after!</p>
+        !loading && (
+          <Typography
+            variant="body2"
+            sx={{ color: theme.palette.primary.contrastText, textAlign: "center" }}
+          >
+            No games available. Please start a game on Lichess and reload!
+          </Typography>
+        )
       )}
 
-      {selectedGameId && <p>Selected Game ID: {selectedGameId}</p>}
+      {selectedGameId && (
+        <Typography
+          variant="body2"
+          sx={{
+            marginTop: "16px",
+            color: theme.palette.primary.contrastText,
+            textAlign: "center",
+          }}
+        >
+          Selected Game ID: {selectedGameId}
+        </Typography>
+      )}
     </div>
   );
 }

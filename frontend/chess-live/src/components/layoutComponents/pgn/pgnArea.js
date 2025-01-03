@@ -2,9 +2,11 @@ import React from "react";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useChess } from "../../../chessGame/chessGame";
+import { useTheme } from '@mui/material/styles';
 
 export default function ChessPGNBreadcrumbs() {
   const { getPgn, isAnalysisMode, goToMove } = useChess();
+  const theme = useTheme();
 
   const pgn = getPgn();
   const moves = pgn
@@ -19,10 +21,9 @@ export default function ChessPGNBreadcrumbs() {
   return (
     <div
       style={{
-      
-        backgroundColor: "#f9f9f9",
         height: "100%",
-        width: "100%"
+        width: "100%",
+        backgroundColor: theme.palette.primary.dark,
       }}
     >
       <Typography
@@ -33,9 +34,9 @@ export default function ChessPGNBreadcrumbs() {
           textAlign: "center",
           position: "sticky",
           top: "0",
-          backgroundColor: "#f9f9f9",
           zIndex: "1",
           paddingTop: "20px",
+          color: theme.palette.primary.contrastText,
         }}
       >
         PGN
@@ -76,14 +77,14 @@ export default function ChessPGNBreadcrumbs() {
                   <>
                     {/* Move number */}
                     <Typography
-                      color="textSecondary"
+                      color="primary.contrastText"
                       sx={{ fontWeight: "bold", textAlign: "center" }}
                     >
                       {moveNumber}.
                     </Typography>
-                    {/* White vove */}
+                    {/* White move */}
                     <Link
-                      color={isAnalysisMode ? "primary" : "inherit"}
+                      color="primary.contrastText"
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
@@ -93,7 +94,9 @@ export default function ChessPGNBreadcrumbs() {
                         textDecoration: isAnalysisMode ? "underline" : "none",
                         cursor: isAnalysisMode ? "pointer" : "default",
                         "&:hover": {
-                          color: isAnalysisMode ? "secondary.main" : "inherit",
+                          color: isAnalysisMode
+                            ? theme.palette.primary.light
+                            : theme.palette.primary.contrastText,
                         },
                       }}
                     >
@@ -104,7 +107,7 @@ export default function ChessPGNBreadcrumbs() {
                   <>
                     {/* Black move */}
                     <Link
-                      color={isAnalysisMode ? "primary" : "inherit"}
+                      color="primary.contrastText"
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
@@ -114,7 +117,9 @@ export default function ChessPGNBreadcrumbs() {
                         textDecoration: isAnalysisMode ? "underline" : "none",
                         cursor: isAnalysisMode ? "pointer" : "default",
                         "&:hover": {
-                          color: isAnalysisMode ? "secondary.main" : "inherit",
+                          color: isAnalysisMode
+                            ? theme.palette.primary.light
+                            : theme.palette.primary.contrastText,
                         },
                       }}
                     >

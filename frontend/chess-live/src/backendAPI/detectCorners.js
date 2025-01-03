@@ -78,6 +78,7 @@ export default function DetectCorners() {
       <Button
         variant="contained"
         onClick={handleCapture}
+        color="secondary"
         style={{
           marginTop: "10px",
           display: "block",

@@ -2,7 +2,8 @@ import React from "react";
 import { Chessboard } from "react-chessboard";
 import { useChess } from "../../chessGame/chessGame";
 import { ANIMATION_DURATION, DIFFERENT_SQUARE_COLOR, LIVE_BOARD_SIZE } from "../settings/constants";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 const parseFen = (fen) => {
   const rows = fen.split(" ")[0].split("/");
@@ -41,13 +42,23 @@ const findDifferences = (fen1, fen2) => {
 };
 
 export default function LiveChessboard({ fenDetected }) {
+  const theme = useTheme();
   const { getFen } = useChess();
   const actualFen = getFen().split(" ")[0];
   const squareStyles = findDifferences(actualFen, fenDetected);
 
   return (
     <>
-      <h1>Detected Pieces</h1>
+      <Typography
+        variant="h4"
+        sx={{
+          color: theme.palette.primary.contrastText,
+          textAlign: "center",
+          marginBottom: "16px",
+        }}
+      >
+        Detected Pieces
+      </Typography>
       <Stack direction="column" spacing={2} alignItems="center">
         <Chessboard
           position={fenDetected || "8/8/8/8/8/8/8/8"}
@@ -56,6 +67,17 @@ export default function LiveChessboard({ fenDetected }) {
           animationDuration={ANIMATION_DURATION}
           customSquareStyles={squareStyles}
         />
+        {/* {!fenDetected && (
+          <Typography
+            variant="body1"
+            sx={{
+              color: theme.palette.secondary.light,
+              textAlign: "center",
+            }}
+          >
+            No pieces detected yet.
+          </Typography>
+        )} */}
       </Stack>
     </>
   );

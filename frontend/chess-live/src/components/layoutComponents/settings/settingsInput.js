@@ -1,6 +1,9 @@
 import React from "react";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { useSettings } from "../../settings/settings";
-import "./settingsInput.css";
 import { CORNERS_CONFIDENCE, DETECT_FREQUENCY, PIECES_CONFIDENCE } from "../../settings/constants";
 
 export default function SettingsInput() {
@@ -16,74 +19,102 @@ export default function SettingsInput() {
   } = useSettings();
 
   return (
-    <div className="settings-input-container">
-      <div className="settings-input-group">
-        <label className="settings-input-label">Corners Confidence:</label>
-        <input
+    <Box
+      sx={{
+        margin: "0 auto",
+        padding: "100px",
+        backgroundColor: "background.paper",
+        borderRadius: "8px",
+        boxShadow: 3,
+      }}
+    >
+      <Typography variant="h6" sx={{ marginBottom: "16px", textAlign: "center" }}>
+        Settings
+      </Typography>
+
+      <Box sx={{ marginBottom: "16px" }}>
+        <TextField
+          fullWidth
           type="number"
+          label="Corners Confidence"
           value={cornersConf || CORNERS_CONFIDENCE}
           onChange={(e) => {
             const value = parseFloat(e.target.value);
             if (!isNaN(value) && value >= 0 && value <= 1) setCornersConf(value);
           }}
-          step="0.05"
-          min="0"
-          max="1"
-          className="settings-input-field"
+          inputProps={{ step: 0.05, min: 0.1, max: 1 }}
+          variant="outlined"
+          sx={{ marginBottom: "16px" }}
         />
-      </div>
-      <div className="settings-input-group">
-        <label className="settings-input-label">Pieces Confidence:</label>
-        <input
+      </Box>
+
+      <Box sx={{ marginBottom: "16px" }}>
+        <TextField
+          fullWidth
           type="number"
+          label="Pieces Confidence"
           value={piecesConf || PIECES_CONFIDENCE}
           onChange={(e) => {
             const value = parseFloat(e.target.value);
             if (!isNaN(value) && value >= 0 && value <= 1) setPiecesConf(value);
           }}
-          step="0.05"
-          min="0"
-          max="1"
-          className="settings-input-field"
+          inputProps={{ step: 0.05, min: 0.1, max: 1 }}
+          variant="outlined"
+          sx={{ marginBottom: "16px" }}
         />
-      </div>
-      <div className="settings-input-group">
-        <label className="settings-input-label">Detect Frequency (ms):</label>
-        <input
+      </Box>
+
+      <Box sx={{ marginBottom: "16px" }}>
+        <TextField
+          fullWidth
           type="number"
+          label="Detect Frequency (ms)"
           value={detectFrequency || DETECT_FREQUENCY}
           onChange={(e) => {
             const value = parseInt(e.target.value, 10);
             if (!isNaN(value) && value > 0) setDetectFrequency(value);
           }}
-          step="100"
-          min="100"
-          className="settings-input-field"
+          inputProps={{ step: 100, min: 1000 }}
+          variant="outlined"
         />
-      </div>
-      <div style={{ textAlign: "center" }}>
-        <button
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          marginTop: "16px",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="primary"
           onClick={resetConfidences}
-          className="settings-input-button reset-confidences"
+          sx={{ width: "100%" }}
         >
           Reset Confidences
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
           onClick={resetDetectFrequency}
-          className="settings-input-button reset-frequency"
+          sx={{ width: "100%" }}
         >
           Reset Frequency
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outlined"
+          color="error"
           onClick={() => {
             resetConfidences();
             resetDetectFrequency();
           }}
-          className="settings-input-button reset-all"
+          sx={{ width: "100%" }}
         >
           Reset All
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 }
