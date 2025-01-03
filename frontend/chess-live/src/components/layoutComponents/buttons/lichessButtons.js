@@ -15,8 +15,8 @@ export default function LichessButtons() {
   const { fetchOngoingGames, lichessStreamGame, setGameId } = useLichess();
   const { setGameFromLichess, makeMove, setPlayerColor } = useChess();
 
-
   const handleLoadGames = async () => {
+    setSelectedGameId("");
     if (!localStorage.getItem("lichessToken")) {
       showSnackbar("You must login to load games!", "warning");
       return;
@@ -41,7 +41,7 @@ export default function LichessButtons() {
       showSnackbar("You must login to load games!", "warning");
       return;
     }
-    
+
     if (stopStreamRef.current) {
       stopStreamRef.current();
       stopStreamRef.current = null;
@@ -80,55 +80,50 @@ export default function LichessButtons() {
 
   useEffect(() => {
     return () => {
-      setSelectedGameId('');
+      setSelectedGameId("");
       if (stopStreamRef.current) {
         stopStreamRef.current();
       }
     };
-    
   }, []);
 
-
   return (
-    <>
-      <div>
-        <h3>Ongoing Games</h3>
+    <div style={{ maxWidth: "250px", margin: "0 auto", padding: "1rem" }}>
+      <h3>Choose game from Lichess</h3>
 
-        <Button
-          variant="outlined"
-          onClick={handleLoadGames}
-          disabled={loading}
+      <Button
+        variant="outlined"
+        onClick={handleLoadGames}
+        disabled={loading}
+        style={{
+          width: "100%",
+          marginBottom: "1rem",
+        }}
+      >
+        Load Ongoing Games
+      </Button>
+
+      {games.length > 0 ? (
+        <Select
+          value={selectedGameId}
+          onChange={(e) => handleGameSelection(e.target.value)}
+          displayEmpty
+          fullWidth
         >
-          Load Ongoing Games
-        </Button>
-
-        {games.length > 0 ? (
-          <Select
-            value={selectedGameId}
-            onChange={(e) => handleGameSelection(e.target.value)}
-            displayEmpty
-            fullWidth
-          >
-            <MenuItem value="" disabled>
-              Select a Game
+          <MenuItem value="" disabled>
+            Select a Game
+          </MenuItem>
+          {games.map((game) => (
+            <MenuItem key={game.gameId} value={game.gameId}>
+              {`${game.opponentUsername} (${game.color})`}
             </MenuItem>
-            {games.map((game) => (
-              <MenuItem
-                key={game.gameId}
-                value={game.gameId}
-              >
-                {`${game.opponentUsername} (${game.color})`}
-              </MenuItem>
-            ))}
-          </Select>
-        ) : (
-          !loading && <p>No games available</p>
-        )}
+          ))}
+        </Select>
+      ) : (
+        !loading && <p>No games available, please start a game on Lichess and reload after!</p>
+      )}
 
-        {selectedGameId && (
-          <p>Selected Game ID: {selectedGameId}</p>
-        )}
-      </div>
-    </>
+      {selectedGameId && <p>Selected Game ID: {selectedGameId}</p>}
+    </div>
   );
 }
