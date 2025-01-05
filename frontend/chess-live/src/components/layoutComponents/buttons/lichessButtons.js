@@ -15,7 +15,7 @@ export default function LichessButtons() {
   const { selectedGameId, setSelectedGameId } = useGlobalVariables();
   const [loading, setLoading] = useState(false);
   const stopStreamRef = useRef(null);
-  const { fetchOngoingGames, lichessStreamGame, setGameId, setPlayerColor, playerColor } = useLichess();
+  const { fetchOngoingGames, lichessStreamGame, setGameId, setPlayerColor } = useLichess();
   const { setGameFromLichess, makeMove } = useChess();
 
   const handleLoadGames = async () => {
@@ -51,8 +51,7 @@ export default function LichessButtons() {
     }
     setSelectedGameId(gameId);
     setGameId(gameId);
-    setPlayerColor(color); // Set playerColor here
-    console.log(color, gameId);
+    setPlayerColor(color);
 
     stopStreamRef.current = lichessStreamGame((update) => {
       if (update.type === "gameFull") {
@@ -69,8 +68,8 @@ export default function LichessButtons() {
         const newMove = moves[moves.length - 1];
 
         const isOpponentTurn =
-          (playerColor === "white" && moves.length % 2 === 0) ||
-          (playerColor === "black" && moves.length % 2 !== 0);
+          (color === "white" && moves.length % 2 === 0) ||
+          (color === "black" && moves.length % 2 !== 0);
 
         if (isOpponentTurn) {
           makeMove({

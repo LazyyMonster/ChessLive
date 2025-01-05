@@ -9,7 +9,7 @@ import { BACKEND_URL } from "../components/settings/constants";
 export default function DetectPieces({ image, setFenDetected, onCornersError }) {
     const { detectedCorners, piecesConf } = useSettings();
     const [error, setError] = useState(null);
-    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, getFen } = useChess();
+    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, getFen, getHistory } = useChess();
     const { sendMove, playerColor } = useLichess();
 
     const sendReq = async (image) => {
@@ -48,30 +48,9 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
 
             const fenDetected = response.data.fen;
             setFenDetected(fenDetected);
-            setError(null);
-
-            if (!isPlayingOnline) {
-                const detectedMove = findMove(fenDetected);
-                if (detectedMove) {
-                    makeMove(detectedMove);
-                }
-                return;
-            }
-
-            const prevTurn = getFen().split(" ")[1];
-            const isPlayerTurn =
-                (playerColor === "white" && prevTurn === "w") ||
-                (playerColor === "black" && prevTurn === "b");
-
-            if (isPlayerTurn) {
-                const detectedMove = findMove(fenDetected);
-                if (detectedMove) {
-                    const playerMove = returnAndMakeMove(detectedMove);
-                    sendMove(playerMove);
-                }
-            }
 
             handleMove(fenDetected);
+            
         } catch (err) {
             console.error("Error:", err.response?.data || err.message);
             setError(err.response?.data?.detail || "An error occurred while detecting pieces.");
@@ -87,10 +66,10 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
             return;
         }
 
-        const prevTurn = getFen().split(" ")[1];
+        const moves = getHistory();
         const isPlayerTurn =
-            (playerColor === "white" && prevTurn === "w") ||
-            (playerColor === "black" && prevTurn === "b");
+        (playerColor === "white" && moves.length % 2 === 0) ||
+        (playerColor === "black" && moves.length % 2 !== 0);
 
         if (isPlayerTurn) {
             const detectedMove = findMove(fenDetected);
@@ -99,7 +78,7 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
                 sendMove(playerMove);
             }
         }
-    }, [isPlayingOnline, findMove, makeMove, getFen, playerColor, sendMove, returnAndMakeMove]);
+    }, [isPlayingOnline, findMove, makeMove, getFen, getHistory, playerColor, sendMove, returnAndMakeMove]);
 
     useEffect(() => {
         if (image) {

@@ -70,6 +70,7 @@ export const ChessProvider = ({ children }) => {
 
   const getPgn = () => game.pgn();
   const getFen = () => game.fen();
+  const getHistory = () => game.history();
 
   const toggleAnalysisMode = () => {
     setIsAnalysisMode((prev) => {
@@ -243,6 +244,7 @@ export const ChessProvider = ({ children }) => {
         setGame,
         getPgn,
         getFen,
+        getHistory,
         toggleAnalysisMode,
         goToNextMove,
         goToPreviousMove,
