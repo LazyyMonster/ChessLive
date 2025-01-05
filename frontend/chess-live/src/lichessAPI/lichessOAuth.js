@@ -40,7 +40,7 @@ const fetchBody = async (token, path, options = {}) => {
 
 
 export default function LichessOAuth() {
-  const [isAuthorized, setIsAuthorized] = useState(localStorage.getItem('isAuthorized') || false);
+  const [isAuthorized, setIsAuthorized] = useState(sessionStorage.getItem('isAuthorized') || false);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [username, setUsername] = useState('');
   const [profileUrl, setProfileUrl] = useState('');
@@ -60,16 +60,16 @@ export default function LichessOAuth() {
 
   const lichessLogin = () => {
     const oauth = getOauth();
-    localStorage.removeItem('oauth2authcodepkce-state');
+    sessionStorage.removeItem('oauth2authcodepkce-state');
     oauth.fetchAuthorizationCode();
   };
 
   const lichessLogout = () => {
     setUsername('');
     setProfileUrl('');
-    localStorage.removeItem('lichessToken');
-    localStorage.removeItem('isAuthorized');
-    localStorage.removeItem('oauth2authcodepkce-state');
+    sessionStorage.removeItem('lichessToken');
+    sessionStorage.removeItem('isAuthorized');
+    sessionStorage.removeItem('oauth2authcodepkce-state');
     setIsAuthorized(false);
     showSnackbar("Succesfully logout!", "success");
   };
@@ -90,8 +90,8 @@ export default function LichessOAuth() {
         if (!newToken) throw new Error('Access token is missing or invalid.');
 
         setIsAuthorized(true);
-        localStorage.setItem('lichessToken', newToken);
-        localStorage.setItem('isAuthorized', true);
+        sessionStorage.setItem('lichessToken', newToken);
+        sessionStorage.setItem('isAuthorized', true);
 
         const cleanUrl = window.location.origin + window.location.pathname;
         window.history.replaceState(null, '', cleanUrl);
@@ -112,7 +112,7 @@ export default function LichessOAuth() {
 
   useEffect(() => {
     if (isAuthorized && isAuthChecked) {
-      fetchLichessAccount(localStorage.getItem('lichessToken')).then((account) => {
+      fetchLichessAccount(sessionStorage.getItem('lichessToken')).then((account) => {
         if (account) {
           setUsername(account.username);
           setProfileUrl(account.url);

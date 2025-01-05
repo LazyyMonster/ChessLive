@@ -20,7 +20,7 @@ export default function LichessButtons() {
 
   const handleLoadGames = async () => {
     setSelectedGameId("");
-    if (!localStorage.getItem("lichessToken")) {
+    if (!sessionStorage.getItem("lichessToken")) {
       showSnackbar("You must login to load games!", "warning");
       return;
     }
@@ -40,7 +40,7 @@ export default function LichessButtons() {
   };
 
   const handleGameSelection = (gameId) => {
-    if (!localStorage.getItem("lichessToken")) {
+    if (!sessionStorage.getItem("lichessToken")) {
       showSnackbar("You must login to load games!", "warning");
       return;
     }
@@ -93,7 +93,7 @@ export default function LichessButtons() {
   return (
     <div
       style={{
-        maxWidth: "250px",
+        maxWidth: "300px",
         margin: "0 auto",
         padding: "1rem",
         // backgroundColor: theme.palette.background.paper,
@@ -103,7 +103,7 @@ export default function LichessButtons() {
     >
       <Typography
         variant="h6"
-        sx={{ color: theme.palette.primary.contrastText, marginBottom: "16px" }}
+        sx={{ color: theme.palette.primary.contrastText, marginBottom: "16px", textAlign: "center" }}
       >
         Load game from Lichess
       </Typography>

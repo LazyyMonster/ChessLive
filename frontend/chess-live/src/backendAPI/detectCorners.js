@@ -6,16 +6,21 @@ import { useSettings } from "../components/settings/settings";
 import CameraView from "../components/camera/cameraView";
 import Button from "@mui/material/Button";
 import { showSnackbar } from "../components/alerts/customSnackbar";
+import { BACKEND_URL } from "../components/settings/constants";
 
 export default function DetectCorners() {
   const { capture, setWebcamRef } = useCapture();
   const { cornersConf, setDetectedCorners } = useSettings();
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleCapture = () => {
+
+  const handleCapture = async () => {
     const image = capture();
     if (image) {
-      sendReq(image);
+      setLoading(true);
+      await sendReq(image);
+      setLoading(false);
     }
   };
 
@@ -40,7 +45,7 @@ export default function DetectCorners() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const url = `http://127.0.0.1:8000/detect_corners/?corner_conf=${cornersConf}`;
+        const url = `${BACKEND_URL}/detect_corners/?corner_conf=${cornersConf}`;
         const response = await axios.post(url, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -79,13 +84,13 @@ export default function DetectCorners() {
         variant="contained"
         onClick={handleCapture}
         color="secondary"
-        style={{
-          marginTop: "10px",
-          display: "block",
-          margin: "0 auto",
+        disabled={loading} // Disable the button during loading
+        sx={{
+          // marginTop: "10px",
+          width: "100%",
         }}
       >
-        Detect Corners
+        {loading ? "Detecting..." : "Detect Corners"}
       </Button>
 
       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}

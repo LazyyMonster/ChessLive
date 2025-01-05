@@ -8,7 +8,7 @@ export const LichessProvider = ({ children }) => {
     const [gameId, setGameId] = useState(null);
 
     const getToken = () => {
-        return localStorage.getItem('lichessToken');
+        return sessionStorage.getItem('lichessToken');
     }
 
     const fetchGamePGN = async (gameId) => {

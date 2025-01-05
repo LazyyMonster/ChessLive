@@ -59,24 +59,17 @@ def make_grid(image):
         [width, height]
     ])
 
-    plt.figure(figsize=(10, 10), dpi=80)
-
-    TL = corners[0]
-    BL = corners[2]
-    TR = corners[1]
-    BR = corners[3]
+    TL, TR, BL, BR = corners[0], corners[1], corners[2], corners[3]
 
     def interpolate(xy0, xy1):
-        x0,y0 = xy0
-        x1,y1 = xy1
-        dx = (x1-x0) / 8
-        dy = (y1-y0) / 8
-        pts = [(x0+i*dx,y0+i*dy) for i in range(9)]
-        return pts
+        x0, y0 = xy0
+        x1, y1 = xy1
+        dx = (x1 - x0) / 8
+        dy = (y1 - y0) / 8
+        return [(x0 + i * dx, y0 + i * dy) for i in range(9)]
 
-    ptsT = interpolate( TL, TR )
-    ptsL = interpolate( TL, BL )
-        
+    ptsT = interpolate(TL, TR)
+    ptsL = interpolate(TL, BL)
     return ptsT, ptsL
 
 
