@@ -23,7 +23,6 @@ export const ChessProvider = ({ children }) => {
 
   //Playing mode variables
   const [isPlayingOnline, setIsPlayingOnline] = useState(true);
-  const [playerColor, setPlayerColor] = useState('white');
 
   const setFenAndLastMove = (chess) => {
     setFen(chess.fen());
@@ -262,8 +261,6 @@ export const ChessProvider = ({ children }) => {
         loadPreviewGame,
         setFenAndLastMove,
         setGameFromLichess,
-        playerColor,
-        setPlayerColor,
         returnAndMakeMove,
         isGameOver,
         gameOverReason,

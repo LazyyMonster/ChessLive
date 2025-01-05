@@ -9,8 +9,8 @@ import { BACKEND_URL } from "../components/settings/constants";
 export default function DetectPieces({ image, setFenDetected, onCornersError }) {
     const { detectedCorners, piecesConf } = useSettings();
     const [error, setError] = useState(null);
-    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, playerColor, getFen } = useChess();
-    const { sendMove } = useLichess();
+    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, getFen } = useChess();
+    const { sendMove, playerColor } = useLichess();
 
     const sendReq = async (image) => {
         if (!detectedCorners) {

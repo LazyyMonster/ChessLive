@@ -6,6 +6,7 @@ const LichessContext = createContext();
 export const LichessProvider = ({ children }) => {
 
     const [gameId, setGameId] = useState(null);
+    const [playerColor, setPlayerColor] = useState(null);
 
     const getToken = () => {
         return sessionStorage.getItem('lichessToken');
@@ -196,6 +197,8 @@ export const LichessProvider = ({ children }) => {
                 lichessStreamGame,
                 sendMove,
                 setGameId,
+                playerColor,
+                setPlayerColor,
             }}
         >
             {children}

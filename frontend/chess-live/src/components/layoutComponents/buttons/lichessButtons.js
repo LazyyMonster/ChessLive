@@ -15,8 +15,8 @@ export default function LichessButtons() {
   const { selectedGameId, setSelectedGameId } = useGlobalVariables();
   const [loading, setLoading] = useState(false);
   const stopStreamRef = useRef(null);
-  const { fetchOngoingGames, lichessStreamGame, setGameId } = useLichess();
-  const { setGameFromLichess, makeMove, setPlayerColor } = useChess();
+  const { fetchOngoingGames, lichessStreamGame, setGameId, setPlayerColor, playerColor } = useLichess();
+  const { setGameFromLichess, makeMove } = useChess();
 
   const handleLoadGames = async () => {
     setSelectedGameId("");
@@ -39,7 +39,7 @@ export default function LichessButtons() {
     }
   };
 
-  const handleGameSelection = (gameId) => {
+  const handleGameSelection = (gameId, color) => {
     if (!sessionStorage.getItem("lichessToken")) {
       showSnackbar("You must login to load games!", "warning");
       return;
@@ -51,19 +51,20 @@ export default function LichessButtons() {
     }
     setSelectedGameId(gameId);
     setGameId(gameId);
-    let playerColor = null;
+    setPlayerColor(color); // Set playerColor here
+    console.log(color, gameId);
 
     stopStreamRef.current = lichessStreamGame((update) => {
       if (update.type === "gameFull") {
         const moves = update.state?.moves ? update.state.moves.split(" ") : [];
-        const isWhitePlayer = update.white?.id !== undefined;
-
-        playerColor = isWhitePlayer ? "white" : "black";
-        setPlayerColor(playerColor);
         setGameFromLichess(moves);
       }
 
       if (update.type === "gameState" && update.moves) {
+        if (update.status !== "started") {
+          showSnackbar("game has ended", "info");
+          return;
+        }
         const moves = update.moves.split(" ");
         const newMove = moves[moves.length - 1];
 
@@ -80,6 +81,7 @@ export default function LichessButtons() {
       }
     }, gameId);
   };
+
 
   useEffect(() => {
     return () => {
@@ -123,30 +125,37 @@ export default function LichessButtons() {
 
       {games.length > 0 ? (
         <Select
-          value={selectedGameId}
-          onChange={(e) => handleGameSelection(e.target.value)}
-          displayEmpty
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.background.default,
-            color: theme.palette.text.primary,
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: theme.palette.primary.main,
-            },
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: theme.palette.primary.light,
-            },
-          }}
-        >
-          <MenuItem value="" disabled>
-            Select a Game
+        value={selectedGameId}
+        onChange={(e) => {
+          const selectedGame = games.find((game) => game.gameId === e.target.value);
+          handleGameSelection(selectedGame.gameId, selectedGame.color); // Pass both gameId and color
+        }}
+        displayEmpty
+        fullWidth
+        sx={{
+          backgroundColor: theme.palette.background.default,
+          color: theme.palette.text.primary,
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.primary.main,
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.primary.light,
+          },
+        }}
+      >
+        <MenuItem value="" disabled>
+          Select a Game
+        </MenuItem>
+        {games.map((game) => (
+          <MenuItem
+            key={game.gameId}
+            value={game.gameId}
+          >
+            {`${game.opponentUsername} (${game.color})`}
           </MenuItem>
-          {games.map((game) => (
-            <MenuItem key={game.gameId} value={game.gameId}>
-              {`${game.opponentUsername} (${game.color})`}
-            </MenuItem>
-          ))}
-        </Select>
+        ))}
+      </Select>
+      
       ) : (
         !loading && (
           <Typography
