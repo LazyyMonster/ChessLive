@@ -37,7 +37,7 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
             };
             formData.append("data", JSON.stringify(body));
             const response = await axios.post(
-                `${BACKEND_URL}/fen_from_image/`,
+                `${BACKEND_URL}/fen/`,
                 formData,
                 {
                     headers: {
