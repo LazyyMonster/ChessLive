@@ -10,7 +10,7 @@ export const STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq 
 export const ChessProvider = ({ children }) => {
   //Live game variables
   const [game, setGame] = useState(new Chess(STARTING_FEN));
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState("ongoing");
 
   //Shared variable livae and analysis
   const [lastMove, setLastMove] = useState(null);
@@ -267,6 +267,7 @@ export const ChessProvider = ({ children }) => {
         isGameOver,
         gameOverReason,
         result,
+        setResult,
       }}
     >
       {children}

@@ -16,7 +16,7 @@ export default function LichessButtons() {
   const [loading, setLoading] = useState(false);
   const stopStreamRef = useRef(null);
   const { fetchOngoingGames, lichessStreamGame, setGameId, setPlayerColor } = useLichess();
-  const { setGameFromLichess, makeMove } = useChess();
+  const { setGameFromLichess, makeMove, setResult } = useChess();
 
   const handleLoadGames = async () => {
     setSelectedGameId("");
@@ -60,6 +60,13 @@ export default function LichessButtons() {
       }
 
       if (update.type === "gameState" && update.moves) {
+        if (update.status === "resign") {
+          const winner = update.winner;
+          const loser = color === "white" && winner === "black" ? "White" : "Black";
+          showSnackbar(`${loser} resigned. The winner is: ${winner}`, "info");
+          setResult(winner);
+          return;
+        }
         if (update.status !== "started") {
           showSnackbar("game has ended", "info");
           return;
@@ -127,7 +134,7 @@ export default function LichessButtons() {
         value={selectedGameId}
         onChange={(e) => {
           const selectedGame = games.find((game) => game.gameId === e.target.value);
-          handleGameSelection(selectedGame.gameId, selectedGame.color); // Pass both gameId and color
+          handleGameSelection(selectedGame.gameId, selectedGame.color);
         }}
         displayEmpty
         fullWidth

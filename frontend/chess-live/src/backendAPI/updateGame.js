@@ -15,65 +15,58 @@ export default function UpdateGame({ setFenDetected }) {
     const intervalRef = useRef(null);
     const { isGameOver, gameOverReason, result } = useChess();
 
+    const stopDetection = () => {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        setIsCapturing(false);
+    };
+
     const detectPosition = () => {
-        if (isGameOver()) {
-            const reason = gameOverReason();
-            showSnackbar(reason, "info");
-            setIsCapturing(false);
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-            return;
-        }
         if (!detectedCorners) {
             showSnackbar("You must detect corners first!", "warning");
             return;
         }
+
         if (isCapturing) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-            setIsCapturing(false);
+            stopDetection();
             showSnackbar("Detecting position stopped!", "info");
         } else {
+            if (result !== "ongoing") {
+                showSnackbar("The game is already over! Cannot start detection.", "warning");
+                return;
+            }
+
             showSnackbar("Detecting position started!", "success");
             setIsCapturing(true);
             intervalRef.current = setInterval(() => {
+                // Check if the game is over or the result has changed
+                if (isGameOver() || result !== "ongoing") {
+                    const reason = isGameOver() ? gameOverReason() : "Game result is set!";
+                    showSnackbar(reason, "info");
+                    stopDetection();
+                    return;
+                }
+
+                // Capture and process the image
                 const image = capture();
                 if (image) {
                     setCapturedImage(image);
-                }
-                // Stop detection if the game is over during interval execution
-                if (isGameOver()) {
-                    const reason = gameOverReason();
-                    showSnackbar(reason, "info");
-                    clearInterval(intervalRef.current);
-                    intervalRef.current = null;
-                    setIsCapturing(false);
                 }
             }, detectFrequency);
         }
     };
 
-
-    // Cleanup when result changes
+    // Cleanup when the result changes
     useEffect(() => {
-        if (result === "ongoing") {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
-            setCapturedImage(null);
-            setIsCapturing(false);
-            // showSnackbar("result changes in update game!", "info");
+        if (result !== "ongoing") {
+            stopDetection();
         }
-
     }, [result]);
 
+    // Cleanup on component unmount
     useEffect(() => {
         return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
-            setIsCapturing(false);
+            stopDetection();
         };
     }, []);
 

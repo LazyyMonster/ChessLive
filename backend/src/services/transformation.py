@@ -41,4 +41,4 @@ def order_corners(pts):
     top_left, top_right = top_points[np.argsort(top_points[:, 0])]
     bottom_left, bottom_right = bottom_points[np.argsort(bottom_points[:, 0])]
 
-    return np.array([top_left, top_right, bottom_right, bottom_left], dtype="float32")
+    return np.array([top_right, bottom_right, bottom_left, top_left], dtype="float32")
