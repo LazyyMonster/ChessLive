@@ -5,7 +5,7 @@ import { useChess } from "../../../chessGame/chessGame";
 import { useTheme } from '@mui/material/styles';
 
 export default function ChessPGNBreadcrumbs() {
-  const { getPgn, isAnalysisMode, goToMove } = useChess();
+  const { getPgn, isAnalysisMode, goToMove, result } = useChess();
   const theme = useTheme();
 
   const pgn = getPgn();
@@ -132,6 +132,24 @@ export default function ChessPGNBreadcrumbs() {
           })}
         </div>
       </div>
+
+        {/* Result Footer */}
+      {result !== "ongoing" && (
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            position: "sticky",
+            bottom: "0",
+            zIndex: "1",
+            padding: "20px 0",
+            color: theme.palette.primary.contrastText,
+          }}
+        >
+          Result: {result}
+        </Typography>
+      )}
     </div>
   );
 }
