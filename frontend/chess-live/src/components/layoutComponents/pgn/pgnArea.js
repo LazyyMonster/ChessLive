@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useChess } from "../../../chessGame/chessGame";
 import { useTheme } from '@mui/material/styles';
 
-export default function ChessPGNBreadcrumbs() {
+export default function ChessPGNdisplay() {
   const { getPgn, isAnalysisMode, goToMove, result } = useChess();
   const theme = useTheme();
 

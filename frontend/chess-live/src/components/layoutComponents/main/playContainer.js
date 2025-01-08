@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Paper } from "@mui/material";
 import CustomChessboard from "../../chessboard/chessboard";
-import ChessPGNBreadcrumbs from "../pgn/pgnArea";
+import ChessPGNdisplay from "../pgn/pgnArea";
 import DetectCorners from "../../../backendAPI/detectCorners";
 import { LichessProvider } from "../../../lichessAPI/lichessGame";
 import { useTheme } from "@mui/material/styles";
@@ -57,7 +57,7 @@ export default function PlayContainer({ setDetectedCorners }) {
             }}
             elevation={3}
           >
-            <ChessPGNBreadcrumbs />
+            <ChessPGNdisplay />
           </Paper>
 
           <Paper

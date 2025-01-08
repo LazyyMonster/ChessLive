@@ -67,17 +67,6 @@ export default function LiveChessboard({ fenDetected }) {
           animationDuration={ANIMATION_DURATION}
           customSquareStyles={squareStyles}
         />
-        {/* {!fenDetected && (
-          <Typography
-            variant="body1"
-            sx={{
-              color: theme.palette.secondary.light,
-              textAlign: "center",
-            }}
-          >
-            No pieces detected yet.
-          </Typography>
-        )} */}
       </Stack>
     </>
   );

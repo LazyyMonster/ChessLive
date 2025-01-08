@@ -13,7 +13,7 @@ export default function DetectPieces({ image, setFenDetected }) {
 
     const sendReq = async (image) => {
         if (!detectedCorners) {
-            showSnackbar(`Before starting the game, you must detect 4 corners.`, "error");
+            showSnackbar(`Before starting following, you must detect 4 corners.`, "error");
             return;
         }
 

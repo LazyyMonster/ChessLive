@@ -54,13 +54,14 @@ export default function DetectCorners() {
         const detectedCorners = response.data.corners || [];
         const cornerKeys = Object.keys(detectedCorners);
         if (cornerKeys.length !== 4) {
+          setDetectedCorners(null);
           showSnackbar("Try again detecting corners!", "error");
         }
         else {
+          setDetectedCorners(detectedCorners);
           showSnackbar("Succesfully detected 4 corners!", "success");
         }
 
-        setDetectedCorners(detectedCorners);
       } catch (err) {
         showSnackbar("Failed to send request to get corners!", "error");
       }
@@ -69,7 +70,7 @@ export default function DetectCorners() {
   );
 
   return (
-    <div style={{ flexDirection: "column" }}>
+    <div style={{ flexDirection: "column", width: "100%" }}>
       <div style={{ position: "relative" }}>
         <CameraView ref={setWebcamRef} />
         <CanvasOverlay />
