@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useRef, useContext } from "react";
 import { CAPTURED_IMAGE_WIDTH, CAPTURED_IMAGE_HEIGHT } from '../settings/constants';
+import { showSnackbar } from "../alerts/customSnackbar";
 
 const CaptureContext = createContext();
 
@@ -12,7 +13,7 @@ export function CaptureProvider({ children }) {
 
     const capture = useCallback(() => {
         if (!webcamRef.current) {
-            console.error("Webcam reference is not set. Capture aborted.");
+            showSnackbar("Webcam reference is not set. Capture aborted.", "error");
             return null;
         }
 

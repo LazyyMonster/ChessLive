@@ -16,7 +16,7 @@ async def detect_corners_endpoint(file: UploadFile, corner_conf: float):
         detections = detect_corners(image, corner_conf)
 
         num_corners = len(detections)
-        if num_corners < 4:
+        if num_corners != 4:
             return {"error": f"Four corners are required to crop the chessboard. Detected {num_corners} corners."}
         corners = order_corners(detections)
 

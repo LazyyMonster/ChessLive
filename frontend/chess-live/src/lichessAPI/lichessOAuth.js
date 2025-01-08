@@ -53,14 +53,21 @@ export default function LichessOAuth() {
       clientId,
       scopes,
       redirectUrl: REDIRECT_URL,
-      onAccessTokenExpiry: (refreshAccessToken) => refreshAccessToken(),
-      onInvalidGrant: () => console.warn('Invalid grant'),
+      onAccessTokenExpiry: (refreshAccessToken) => {
+        showSnackbar("Refreshing access token...", "info");
+        refreshAccessToken();
+      },
+      onInvalidGrant: () => {
+        showSnackbar("Session expired. Please log in again.", "warning");
+        console.warn('Invalid grant');
+      },
     });
   };
 
   const lichessLogin = () => {
     const oauth = getOauth();
     sessionStorage.removeItem('oauth2authcodepkce-state');
+    showSnackbar("Redirecting to Lichess login...", "info");
     oauth.fetchAuthorizationCode();
   };
 
@@ -71,7 +78,7 @@ export default function LichessOAuth() {
     sessionStorage.removeItem('isAuthorized');
     sessionStorage.removeItem('oauth2authcodepkce-state');
     setIsAuthorized(false);
-    showSnackbar("Succesfully logout!", "success");
+    showSnackbar("Successfully logged out!", "success");
   };
 
   const checkAuthStatus = async () => {
@@ -79,7 +86,6 @@ export default function LichessOAuth() {
 
     try {
       isProcessingAuth.current = true;
-
       const oauth = getOauth();
       const isReturning = await oauth.isReturningFromAuthServer();
 
@@ -92,11 +98,13 @@ export default function LichessOAuth() {
         setIsAuthorized(true);
         sessionStorage.setItem('lichessToken', newToken);
         sessionStorage.setItem('isAuthorized', true);
+        showSnackbar("Successfully authenticated with Lichess!", "success");
 
         const cleanUrl = window.location.origin + window.location.pathname;
         window.history.replaceState(null, '', cleanUrl);
       }
     } catch (err) {
+      showSnackbar(`Authentication Error: ${err.message}`, "error");
       console.error('Authentication Error:', err.message);
     } finally {
       setIsAuthChecked(true);

@@ -178,18 +178,14 @@ export const ChessProvider = ({ children }) => {
   };
 
   // Lichess game setting
-  const setGameFromLichess = (moves) => {  
+  const setGameFromLichess = (moves) => {
     if (moves) {
       resetGame();
       const updatedGame = game;
 
       moves.forEach((move) => {
-        try {
-          updatedGame.move(move);
-          analysisGame.move(move);
-        } catch (err) {
-          console.error(`Invalid move received: ${move}`, err);
-        }
+        updatedGame.move(move);
+        analysisGame.move(move);
       });
       setFenAndLastMove(updatedGame);
       setCurrentMoveIndex(moves.length - 1);
@@ -230,7 +226,7 @@ export const ChessProvider = ({ children }) => {
     }
     return;
   };
-  
+
 
   useEffect(() => {
 

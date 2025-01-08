@@ -56,7 +56,12 @@ export default function LichessButtons() {
     stopStreamRef.current = lichessStreamGame((update) => {
       if (update.type === "gameFull") {
         const moves = update.state?.moves ? update.state.moves.split(" ") : [];
-        setGameFromLichess(moves);
+        try {
+          setGameFromLichess(moves);
+        }
+        catch (err) {
+          showSnackbar(`Invalid moves received: ${moves}`, "error");
+        }
       }
 
       if (update.type === "gameState" && update.moves) {
@@ -131,37 +136,37 @@ export default function LichessButtons() {
 
       {games.length > 0 ? (
         <Select
-        value={selectedGameId}
-        onChange={(e) => {
-          const selectedGame = games.find((game) => game.gameId === e.target.value);
-          handleGameSelection(selectedGame.gameId, selectedGame.color);
-        }}
-        displayEmpty
-        fullWidth
-        sx={{
-          backgroundColor: theme.palette.background.default,
-          color: theme.palette.text.primary,
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: theme.palette.primary.main,
-          },
-          "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: theme.palette.primary.light,
-          },
-        }}
-      >
-        <MenuItem value="" disabled>
-          Select a Game
-        </MenuItem>
-        {games.map((game) => (
-          <MenuItem
-            key={game.gameId}
-            value={game.gameId}
-          >
-            {`${game.opponentUsername} (${game.color})`}
+          value={selectedGameId}
+          onChange={(e) => {
+            const selectedGame = games.find((game) => game.gameId === e.target.value);
+            handleGameSelection(selectedGame.gameId, selectedGame.color);
+          }}
+          displayEmpty
+          fullWidth
+          sx={{
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.primary,
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: theme.palette.primary.main,
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: theme.palette.primary.light,
+            },
+          }}
+        >
+          <MenuItem value="" disabled>
+            Select a Game
           </MenuItem>
-        ))}
-      </Select>
-      
+          {games.map((game) => (
+            <MenuItem
+              key={game.gameId}
+              value={game.gameId}
+            >
+              {`${game.opponentUsername} (${game.color})`}
+            </MenuItem>
+          ))}
+        </Select>
+
       ) : (
         !loading && (
           <Typography

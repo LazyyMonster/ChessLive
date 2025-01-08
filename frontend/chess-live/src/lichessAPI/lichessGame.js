@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import { LICHESS_BASE_ENDPOINT } from '../components/settings/constants';
+import { showSnackbar } from "../components/alerts/customSnackbar";
 
 const LichessContext = createContext();
 
@@ -13,71 +14,53 @@ export const LichessProvider = ({ children }) => {
     }
 
     const fetchGamePGN = async (gameId) => {
-        if (!getToken() || !gameId) return null;
-
-        try {
-            const response = await fetch(`${LICHESS_BASE_ENDPOINT}/game/export/${gameId}`, {
-
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch PGN.");
-            }
-
-            const pgn = await response.text();
-
-            if (!pgn) {
-                console.error("No PGN data in response.");
-                return null;
-            }
-
-            const movesRegex = /\n\n([\d\s\w.\-\x]*)(?=\s*\*)/;
-            const match = pgn.match(movesRegex);
-
-            if (match && match[1]) {
-                return match[1].trim();
-            } else {
-                console.error("Failed to extract moves from PGN.");
-                return null;
-            }
-        } catch (err) {
-            console.error("Error fetching PGN:", err);
-            return null;
+        if (!getToken() || !gameId) {
+          showSnackbar("Invalid game or session. Please log in.", "error");
+          return null;
         }
-    };
+    
+        try {
+          const response = await fetch(`${LICHESS_BASE_ENDPOINT}/game/export/${gameId}`, {});
+    
+          if (!response.ok) throw new Error("Failed to fetch PGN.");
+    
+          const pgn = await response.text();
+          const movesRegex = /\n\n([\d\s\w.\-\x]*)(?=\s*\*)/;
+          const match = pgn.match(movesRegex);
+    
+          return match && match[1] ? match[1].trim() : null;
+        } catch (err) {
+          console.error("Error fetching PGN:", err);
+          showSnackbar("Failed to fetch game data.", "error");
+          return null;
+        }
+      };
 
     const fetchOngoingGames = async () => {
-        if (!getToken()) return;
-
-        try {
-            const response = await fetch(`${LICHESS_BASE_ENDPOINT}/api/account/playing`, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`,
-                },
-            });
-            if (!response.ok) {
-                throw new Error("Failed to fetch ongoing games.");
-            }
-
-            const data = await response.json();
-
-            if (data.nowPlaying) {
-                const actualGames = data.nowPlaying.map((game) => ({
-                    gameId: game.gameId,
-                    opponentUsername: game.opponent?.username || "Unknown",
-                    color: game.color,
-                }));
-
-                return actualGames;
-            } else {
-                console.warn("No ongoing games found.");
-                return [];
-            }
-
-        } catch (err) {
-            console.error("Error fetching games:", err);
+        if (!getToken()) {
+          showSnackbar("Please log in to fetch ongoing games.", "error");
+          return [];
         }
-    };
+    
+        try {
+          const response = await fetch(`${LICHESS_BASE_ENDPOINT}/api/account/playing`, {
+            headers: { Authorization: `Bearer ${getToken()}` },
+          });
+    
+          if (!response.ok) throw new Error("Failed to fetch ongoing games.");
+    
+          const data = await response.json();
+          return data.nowPlaying?.map((game) => ({
+            gameId: game.gameId,
+            opponentUsername: game.opponent?.username || "Unknown",
+            color: game.color,
+          })) || [];
+        } catch (err) {
+          console.error("Error fetching games:", err);
+          showSnackbar("Failed to load ongoing games.", "error");
+          return [];
+        }
+      };
 
     const lichessStreamGame = (callback, gameId) => {
         const path = `/api/board/game/stream/${gameId}`;
@@ -94,9 +77,7 @@ export const LichessProvider = ({ children }) => {
                 }
             });
 
-        return () => {
-            controller.abort();
-        };
+        return () => controller.abort();
     };
 
     const readStream = (processLine, signal) => (response) => {
@@ -166,25 +147,26 @@ export const LichessProvider = ({ children }) => {
     };
 
     const sendMove = async (move) => {
-        const url = `${LICHESS_BASE_ENDPOINT}/api/board/game/${gameId}/move/${move}`;
+        if (!gameId) {
+            showSnackbar("Game ID is missing. Please select a game.", "error");
+            return null;
+        }
 
+        const url = `${LICHESS_BASE_ENDPOINT}/api/board/game/${gameId}/move/${move}`;
         try {
             const response = await fetch(url, {
                 method: "POST",
-                headers: {
-                    Authorization: `Bearer ${getToken()}`,
-
-                },
+                headers: { Authorization: `Bearer ${getToken()}` },
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Failed to make move: ${response.status} ${response.statusText} - ${errorText}`);
             }
-
             return await response.json();
         } catch (error) {
             console.error(`Error making move: ${error.message}`);
+            showSnackbar("Failed to send move.", "error");
             throw error;
         }
     };

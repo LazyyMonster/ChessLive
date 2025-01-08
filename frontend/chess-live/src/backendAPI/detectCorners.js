@@ -11,7 +11,6 @@ import { BACKEND_URL } from "../components/settings/constants";
 export default function DetectCorners() {
   const { capture, setWebcamRef } = useCapture();
   const { cornersConf, setDetectedCorners } = useSettings();
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
 
@@ -28,7 +27,7 @@ export default function DetectCorners() {
     async (imageSrc) => {
       try {
         if (!imageSrc) {
-          setError("No image captured to send.");
+          showSnackbar("No image captured to send.", "error");
           return;
         }
 
@@ -60,14 +59,10 @@ export default function DetectCorners() {
         else {
           showSnackbar("Succesfully detected 4 corners!", "success");
         }
-        setError(null);
 
         setDetectedCorners(detectedCorners);
       } catch (err) {
-        setError(
-          err.response?.data?.error ||
-          "An error occurred while processing the image."
-        );
+        showSnackbar("Failed to send request to get corners!", "error");
       }
     },
     [cornersConf, setDetectedCorners]
@@ -93,7 +88,6 @@ export default function DetectCorners() {
         {loading ? "Detecting..." : "Detect Corners"}
       </Button>
 
-      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
     </div>
   );
 }

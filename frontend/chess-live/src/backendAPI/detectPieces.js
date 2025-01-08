@@ -6,21 +6,19 @@ import { useLichess } from "../lichessAPI/lichessGame";
 import { showSnackbar } from "../components/alerts/customSnackbar";
 import { BACKEND_URL } from "../components/settings/constants";
 
-export default function DetectPieces({ image, setFenDetected, onCornersError }) {
+export default function DetectPieces({ image, setFenDetected }) {
     const { detectedCorners, piecesConf } = useSettings();
-    const [error, setError] = useState(null);
     const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, getFen, getHistory } = useChess();
     const { sendMove, playerColor } = useLichess();
 
     const sendReq = async (image) => {
         if (!detectedCorners) {
             showSnackbar(`Before starting the game, you must detect 4 corners.`, "error");
-            onCornersError();
             return;
         }
 
         if (!image) {
-            setError("No image available for detection.");
+            showSnackbar("No image available for detection.", "error");
             return;
         }
 
@@ -52,8 +50,7 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
             handleMove(fenDetected);
             
         } catch (err) {
-            console.error("Error:", err.response?.data || err.message);
-            setError(err.response?.data?.detail || "An error occurred while detecting pieces.");
+            showSnackbar("Failed to detect pieces.", "error");
         }
     };
 
@@ -85,6 +82,5 @@ export default function DetectPieces({ image, setFenDetected, onCornersError }) 
             sendReq(image);
         }
     }, [image, detectedCorners, piecesConf]);
-
-    return error ? <p className="error">{error}</p> : null;
+    
 }
