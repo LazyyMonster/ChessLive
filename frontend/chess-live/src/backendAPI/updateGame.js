@@ -23,6 +23,7 @@ export default function UpdateGame({ setFenDetected }) {
 
     const detectPosition = () => {
         if (!detectedCorners) {
+            stopDetection();
             showSnackbar("You must detect corners first!", "warning");
             return;
         }

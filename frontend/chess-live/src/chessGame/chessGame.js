@@ -54,7 +54,7 @@ export const ChessProvider = ({ children }) => {
       setLastMove({ from: madeMove.from, to: madeMove.to });
       setFen(game.fen());
     }
-    const moveUCI = madeMove.from + madeMove.to;
+    const moveUCI = madeMove.from + madeMove.to + madeMove.promotion;
     return moveUCI;
   };
 

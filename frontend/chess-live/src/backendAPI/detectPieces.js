@@ -8,7 +8,7 @@ import { BACKEND_URL } from "../components/settings/constants";
 
 export default function DetectPieces({ image, setFenDetected }) {
     const { detectedCorners, piecesConf } = useSettings();
-    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, getFen, getHistory } = useChess();
+    const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, getFen, getHistory, result } = useChess();
     const { sendMove, playerColor } = useLichess();
 
     const sendReq = async (image) => {
@@ -55,6 +55,10 @@ export default function DetectPieces({ image, setFenDetected }) {
     };
 
     const handleMove = useCallback((fenDetected) => {
+        if (result !== "ongoing") {
+            return;
+        }
+
         if (!isPlayingOnline) {
             const detectedMove = findMove(fenDetected);
             if (detectedMove) {

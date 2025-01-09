@@ -17,6 +17,7 @@ export default function LichessButtons() {
   const stopStreamRef = useRef(null);
   const { fetchOngoingGames, lichessStreamGame, setGameId, setPlayerColor } = useLichess();
   const { setGameFromLichess, makeMove, setResult } = useChess();
+  const lastMoveRef = useRef(null);
 
   const handleLoadGames = async () => {
     setSelectedGameId("");
@@ -58,6 +59,7 @@ export default function LichessButtons() {
         const moves = update.state?.moves ? update.state.moves.split(" ") : [];
         try {
           setGameFromLichess(moves);
+          lastMoveRef.current = moves[moves.length - 1];
         }
         catch (err) {
           showSnackbar(`Invalid moves received: ${moves}`, "error");
@@ -72,24 +74,43 @@ export default function LichessButtons() {
           setResult(winner);
           return;
         }
-        if (update.status !== "started") {
-          showSnackbar("game has ended", "info");
-          return;
-        }
+
         const moves = update.moves.split(" ");
         const newMove = moves[moves.length - 1];
 
-        const isOpponentTurn =
-          (color === "white" && moves.length % 2 === 0) ||
-          (color === "black" && moves.length % 2 !== 0);
+        if (newMove !== lastMoveRef.current) {
+          lastMoveRef.current = newMove;
+          const isOpponentTurn =
+            (color === "white" && moves.length % 2 === 0) ||
+            (color === "black" && moves.length % 2 !== 0);
 
-        if (isOpponentTurn) {
-          makeMove({
-            from: newMove.slice(0, 2),
-            to: newMove.slice(2, 4),
-          });
+          if (isOpponentTurn) {
+            makeMove({
+              from: newMove.slice(0, 2),
+              to: newMove.slice(2, 4),
+            });
+          }
+        }
+
+        if (update.status === "mate") {
+          setResult(update.winner + " won");
+          showSnackbar(`${update.winner} won by checkmate.`, "info");
+          return;
+        }
+  
+        if (update.status === "outoftime") {
+          setResult(update.winner + " won");
+          showSnackbar(`${update.winner} won on time.`, "info");
+          return;
+        }
+
+        if (update.winner) {
+          setResult(update.winner + " won");
+          showSnackbar(`${update.winner} won.`, "info");
+          return;
         }
       }
+
     }, gameId);
   };
 

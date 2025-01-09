@@ -21,6 +21,9 @@ export default function DetectCorners() {
       await sendReq(image);
       setLoading(false);
     }
+    else {
+      showSnackbar("Enable camera to detect corners!", "info");
+    }
   };
 
   const sendReq = useCallback(
