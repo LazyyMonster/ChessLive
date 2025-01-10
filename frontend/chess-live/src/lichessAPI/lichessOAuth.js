@@ -116,7 +116,7 @@ export default function LichessOAuth() {
     if (!isAuthChecked) {
       checkAuthStatus();
     }
-  }, [isAuthChecked]);
+  }, []);
 
   useEffect(() => {
     if (isAuthorized && isAuthChecked) {

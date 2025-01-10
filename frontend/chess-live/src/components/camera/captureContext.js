@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useRef, useContext } from "react";
+import React, { createContext, useCallback, useRef, useContext, useEffect } from "react";
 import { CAPTURED_IMAGE_WIDTH, CAPTURED_IMAGE_HEIGHT } from '../settings/constants';
 import { showSnackbar } from "../alerts/customSnackbar";
 
@@ -21,13 +21,18 @@ export function CaptureProvider({ children }) {
             width: CAPTURED_IMAGE_WIDTH, 
             height: CAPTURED_IMAGE_HEIGHT 
         });
-        if (imageSrc) {
-            const imgElement = new Image();
-            imgElement.src = imageSrc;
-        }
 
         return imageSrc;
-    }, [webcamRef]);
+    }, []);
+
+    // useEffect(() => {
+    //     return () => {
+    //         if (webcamRef.current && webcamRef.current.srcObject) {
+    //             const tracks = webcamRef.current.srcObject.getTracks();
+    //             tracks.forEach((track) => track.stop());
+    //         }
+    //     };
+    // }, [isPlayingOnline]);
 
     return (
         <CaptureContext.Provider value={{ capture, setWebcamRef, webcamRef }}>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useSettings } from "../components/settings/settings";
 import { useChess } from "../chessGame/chessGame";
 import { useLichess } from "../lichessAPI/lichessGame";
@@ -11,7 +11,7 @@ export default function DetectPieces({ image, setFenDetected }) {
     const { makeMove, returnAndMakeMove, findMove, isPlayingOnline, getFen, getHistory, result } = useChess();
     const { sendMove, playerColor } = useLichess();
 
-    const sendReq = async (image) => {
+    const sendReq = async () => {
         if (!detectedCorners) {
             showSnackbar(`Before starting following, you must detect 4 corners.`, "error");
             return;
@@ -23,32 +23,15 @@ export default function DetectPieces({ image, setFenDetected }) {
         }
 
         try {
-            const blob = await (await fetch(image)).blob();
-            const file = new File([blob], "detect_pieces.jpg", { type: blob.type });
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            const body = {
+            const response = await axios.post(`${BACKEND_URL}/fen/`, {
+                image,
                 corners: detectedCorners,
                 pieces_conf: piecesConf,
-            };
-            formData.append("data", JSON.stringify(body));
-            const response = await axios.post(
-                `${BACKEND_URL}/fen/`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
-            );
+            });
 
             const fenDetected = response.data.fen;
             setFenDetected(fenDetected);
-
             handleMove(fenDetected);
-            
         } catch (err) {
             showSnackbar("Failed to detect pieces.", "error");
         }
@@ -69,8 +52,8 @@ export default function DetectPieces({ image, setFenDetected }) {
 
         const moves = getHistory();
         const isPlayerTurn =
-        (playerColor === "white" && moves.length % 2 === 0) ||
-        (playerColor === "black" && moves.length % 2 !== 0);
+            (playerColor === "white" && moves.length % 2 === 0) ||
+            (playerColor === "black" && moves.length % 2 !== 0);
 
         if (isPlayerTurn) {
             const detectedMove = findMove(fenDetected);
@@ -86,5 +69,5 @@ export default function DetectPieces({ image, setFenDetected }) {
             sendReq(image);
         }
     }, [image, detectedCorners, piecesConf]);
-    
+
 }

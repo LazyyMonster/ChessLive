@@ -16,60 +16,61 @@ export default function UpdateGame({ setFenDetected }) {
     const { isGameOver, gameOverReason, result } = useChess();
 
     const stopDetection = () => {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
         setIsCapturing(false);
     };
 
     const detectPosition = () => {
-        if (!detectedCorners) {
+        if (isCapturing) {
             stopDetection();
+            showSnackbar("Detecting position stopped!", "info");
+            return;
+        }
+
+        if (result !== "ongoing") {
+            showSnackbar("The game is already over! Cannot start detection.", "warning");
+            return;
+        }
+
+        if (!detectedCorners) {
             showSnackbar("You must detect corners first!", "warning");
             return;
         }
 
-        if (isCapturing) {
-            stopDetection();
-            showSnackbar("Detecting position stopped!", "info");
-        } else {
-            if (result !== "ongoing") {
-                showSnackbar("The game is already over! Cannot start detection.", "warning");
-                return;
+        showSnackbar("Detecting position started!", "success");
+        setIsCapturing(true);
+
+        intervalRef.current = setInterval(() => {
+            const image = capture();
+            if (image) {
+                setCapturedImage(image);
             }
-
-            showSnackbar("Detecting position started!", "success");
-            setIsCapturing(true);
-            intervalRef.current = setInterval(() => {
-                // Check if the game is over or the result has changed
-                if (isGameOver() || result !== "ongoing") {
-                    const reason = isGameOver() ? gameOverReason() : "Game result is set!";
-                    showSnackbar(reason, "info");
-                    stopDetection();
-                    return;
-                }
-
-                // Capture and process the image
-                const image = capture();
-                if (image) {
-                    setCapturedImage(image);
-                }
-            }, detectFrequency);
-        }
+        }, detectFrequency);
     };
 
-    // Cleanup when the result changes
     useEffect(() => {
         if (result !== "ongoing") {
             stopDetection();
         }
     }, [result]);
 
-    // Cleanup on component unmount
     useEffect(() => {
         return () => {
             stopDetection();
         };
     }, []);
+
+    // useEffect(() => {
+    //     return () => {
+    //         if (capturedImage) {
+    //             console.log("revoking url object");
+    //             URL.revokeObjectURL(capturedImage);
+    //         }
+    //     };
+    // }, [capturedImage]);
 
     return (
         <>
