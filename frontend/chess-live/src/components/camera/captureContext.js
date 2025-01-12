@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useRef, useContext, useEffect } from "react";
+import React, { createContext, useRef, useContext } from "react";
 import { CAPTURED_IMAGE_WIDTH, CAPTURED_IMAGE_HEIGHT } from '../settings/constants';
 import { showSnackbar } from "../alerts/customSnackbar";
 
@@ -11,28 +11,29 @@ export function CaptureProvider({ children }) {
         webcamRef.current = ref;
     };
 
-    const capture = useCallback(() => {
+    const capture = () => {
         if (!webcamRef.current) {
             showSnackbar("Webcam reference is not set. Capture aborted.", "error");
             return null;
         }
 
-        const imageSrc = webcamRef.current.getScreenshot({ 
-            width: CAPTURED_IMAGE_WIDTH, 
-            height: CAPTURED_IMAGE_HEIGHT 
+        const imageSrc = webcamRef.current.getScreenshot({
+            width: CAPTURED_IMAGE_WIDTH,
+            height: CAPTURED_IMAGE_HEIGHT
         });
 
         return imageSrc;
-    }, []);
+    };
 
     // useEffect(() => {
+    //     console.log("cleaning");
     //     return () => {
     //         if (webcamRef.current && webcamRef.current.srcObject) {
     //             const tracks = webcamRef.current.srcObject.getTracks();
     //             tracks.forEach((track) => track.stop());
     //         }
     //     };
-    // }, [isPlayingOnline]);
+    // }, []);
 
     return (
         <CaptureContext.Provider value={{ capture, setWebcamRef, webcamRef }}>

@@ -24,8 +24,6 @@ export default function CustomChessboard() {
     goToLastMove,
   } = useChess();
 
-  const [fenDetected, setFenDetected] = useState("");
-
   const highlightLastMove = () => {
     if (!lastMove) return {};
     const { from, to } = lastMove;
@@ -64,7 +62,7 @@ export default function CustomChessboard() {
           >
             {isAnalysisMode ? "Return To Live" : "Enable Analysis"}
           </Button>
-          {!isAnalysisMode && <UpdateGame setFenDetected={setFenDetected} />}
+          {!isAnalysisMode && <UpdateGame />}
           {isAnalysisMode && (
             <>
               <Button
@@ -129,7 +127,7 @@ export default function CustomChessboard() {
       </div>
       <div className="LiveBoard">
         <Stack direction="column" spacing={2} alignItems="center">
-          <LiveChessboard fenDetected={fenDetected} />
+          <LiveChessboard />
           <MainControls />
         </Stack>
       </div>

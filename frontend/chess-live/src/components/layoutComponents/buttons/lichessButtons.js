@@ -71,7 +71,7 @@ export default function LichessButtons() {
           const winner = update.winner;
           const loser = color === "white" && winner === "black" ? "White" : "Black";
           showSnackbar(`${loser} resigned. The winner is: ${winner}`, "info");
-          setResult(winner);
+          setResult(winner + " won");
           return;
         }
 
@@ -130,9 +130,6 @@ export default function LichessButtons() {
         maxWidth: "300px",
         margin: "0 auto",
         padding: "1rem",
-        // backgroundColor: theme.palette.background.paper,
-        // borderRadius: "8px",
-        // boxShadow: theme.shadows[1],
       }}
     >
       <Typography

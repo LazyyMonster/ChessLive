@@ -16,6 +16,8 @@ export const ChessProvider = ({ children }) => {
   const [lastMove, setLastMove] = useState(null);
   const [fen, setFen] = useState(game.fen());
 
+  const [fenDetected, setFenDetected] = useState(STARTING_POSITION);
+
   //Analysis game variables
   const [analysisGame, setAnalysisGame] = useState(new Chess(STARTING_FEN));
   const [isAnalysisMode, setIsAnalysisMode] = useState(false);
@@ -46,6 +48,9 @@ export const ChessProvider = ({ children }) => {
       setLastMove({ from: madeMove.from, to: madeMove.to });
       setFen(game.fen());
     }
+    if (isGameOver()) {
+      setResult(gameOverReason);
+    }
   };
 
   const returnAndMakeMove = (move) => {
@@ -62,6 +67,7 @@ export const ChessProvider = ({ children }) => {
     game.reset();
     analysisGame.reset();
     setFen(STARTING_FEN);
+    setFenDetected(STARTING_POSITION)
     setLastMove(null);
     setCurrentMoveIndex(-1);
     setIsAnalysisMode(false);
@@ -264,6 +270,8 @@ export const ChessProvider = ({ children }) => {
         gameOverReason,
         result,
         setResult,
+        fenDetected,
+        setFenDetected,
       }}
     >
       {children}

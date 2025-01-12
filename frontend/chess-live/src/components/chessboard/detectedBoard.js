@@ -41,11 +41,16 @@ const findDifferences = (fen1, fen2) => {
   return differences;
 };
 
-export default function LiveChessboard({ fenDetected }) {
+export default function LiveChessboard() {
   const theme = useTheme();
-  const { getFen } = useChess();
+  const { getFen, fenDetected } = useChess();
   const actualFen = getFen().split(" ")[0];
   const squareStyles = findDifferences(actualFen, fenDetected);
+
+    //  useEffect(() => {
+    //       console.log("fen changed?");
+          
+    //   }, [fenDetected]);
 
   return (
     <>

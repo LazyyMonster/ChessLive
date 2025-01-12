@@ -1,29 +1,41 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { useCapture } from "../components/camera/captureContext";
-import DetectPieces from "./detectPieces";
 import Button from "@mui/material/Button";
 import { useSettings } from "../components/settings/settings";
 import { showSnackbar } from "../components/alerts/customSnackbar";
 import { useGlobalVariables } from "../globalVariables/globalVariables";
 import { useChess } from "../chessGame/chessGame";
+import { fenRequest } from "./apiUtils";
+import { useLichess } from "../lichessAPI/lichessGame";
 
-export default function UpdateGame({ setFenDetected }) {
+export default function UpdateGame() {
     const { capture } = useCapture();
     const { isCapturing, setIsCapturing } = useGlobalVariables();
-    const { detectFrequency, detectedCorners } = useSettings();
-    const [capturedImage, setCapturedImage] = useState(null);
-    const intervalRef = useRef(null);
-    const { isGameOver, gameOverReason, result } = useChess();
+    const { detectFrequency, detectedCorners, piecesConf } = useSettings();
+    const {
+        makeMove,
+        returnAndMakeMove,
+        findMove,
+        isPlayingOnline,
+        getHistory,
+        result,
+        setFenDetected,
+        fenDetected
+    } = useChess();
+    const { sendMove, playerColor } = useLichess();
 
-    const stopDetection = () => {
+    const intervalRef = useRef(null);
+
+    const stopDetection = useCallback(() => {
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
         setIsCapturing(false);
-    };
+    }, [setIsCapturing]);
 
-    const detectPosition = () => {
+    const detectPosition = useCallback(() => {
+
         if (isCapturing) {
             stopDetection();
             showSnackbar("Detecting position stopped!", "info");
@@ -45,32 +57,74 @@ export default function UpdateGame({ setFenDetected }) {
 
         intervalRef.current = setInterval(() => {
             const image = capture();
+            if (!detectedCorners) {
+                showSnackbar("Before starting following, you must detect 4 corners.", "error"); 
+                return;
+            }
+
+            if (!image) {
+                showSnackbar("No image available for detection.", "error"); 
+                return;
+            }
             if (image) {
-                setCapturedImage(image);
+                fenRequest(image, detectedCorners, piecesConf, setFenDetected);
             }
         }, detectFrequency);
-    };
+    }, [
+        isCapturing,
+        intervalRef,
+        stopDetection,
+        result,
+        detectedCorners,
+        piecesConf,
+        detectFrequency,
+        capture,
+        setFenDetected,
+        setIsCapturing,
+    ]);
+
+    const handleMove = useCallback(() => {
+        if (result !== "ongoing") return;
+
+        if (!isPlayingOnline) {
+            const detectedMove = findMove(fenDetected);
+            if (detectedMove) makeMove(detectedMove);
+            return;
+        }
+
+        const moves = getHistory();
+        const isPlayerTurn =
+            (playerColor === "white" && moves.length % 2 === 0) ||
+            (playerColor === "black" && moves.length % 2 !== 0);
+
+        if (isPlayerTurn) {
+            const detectedMove = findMove(fenDetected);
+            if (detectedMove) {
+                const playerMove = returnAndMakeMove(detectedMove);
+                sendMove(playerMove);
+            }
+        }
+    }, [result, isPlayingOnline, fenDetected, playerColor, getHistory, findMove, makeMove, sendMove, returnAndMakeMove]);
+
 
     useEffect(() => {
         if (result !== "ongoing") {
             stopDetection();
         }
-    }, [result]);
+    }, [result, stopDetection]);
+
+    useEffect(() => {
+        if (isCapturing) {
+            handleMove();
+        }
+    }, [fenDetected, handleMove, isCapturing]);
+
 
     useEffect(() => {
         return () => {
             stopDetection();
         };
-    }, []);
-
-    // useEffect(() => {
-    //     return () => {
-    //         if (capturedImage) {
-    //             console.log("revoking url object");
-    //             URL.revokeObjectURL(capturedImage);
-    //         }
-    //     };
-    // }, [capturedImage]);
+    }, [stopDetection]);
 
     return (
         <>
@@ -86,12 +140,6 @@ export default function UpdateGame({ setFenDetected }) {
             >
                 {isCapturing ? "Stop Following" : "Start Following"}
             </Button>
-
-            {capturedImage && (
-                <div>
-                    <DetectPieces image={capturedImage} setFenDetected={setFenDetected} />
-                </div>
-            )}
         </>
     );
 }
