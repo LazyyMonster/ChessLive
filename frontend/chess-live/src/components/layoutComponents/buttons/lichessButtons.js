@@ -97,7 +97,7 @@ export default function LichessButtons() {
           showSnackbar(`${update.winner} won by checkmate.`, "info");
           return;
         }
-  
+
         if (update.status === "outoftime") {
           setResult(update.winner + " won");
           showSnackbar(`${update.winner} won on time.`, "info");
@@ -122,7 +122,7 @@ export default function LichessButtons() {
         stopStreamRef.current();
       }
     };
-  }, []);
+  }, [setSelectedGameId]);
 
   return (
     <div

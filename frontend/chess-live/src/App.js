@@ -15,31 +15,38 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from "./themes/theme";
 
 
+const compose = (providers) =>
+  providers.reduce((Prev, Curr) => ({ children }) => (
+      <Prev>
+          <Curr>{children}</Curr>
+      </Prev>
+  ));
+
+const Provider = compose([
+  GlobalVariablesProvider,
+  AppSnackbarProvider,
+  SettingsProvider,
+  CaptureProvider,
+  ChessProvider,
+])
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <GlobalVariablesProvider>
-          <AppSnackbarProvider>
-            <SettingsProvider>
-              <CaptureProvider>
-                <ChessProvider>
-                  <ResponsiveAppBar className="navbar" />
-                  <div className="content">
-                    <Routes>
-                      <Route path="/" element={<WelcomePage />} />
-                      <Route path="/offline" element={<PlayContainer />} />
-                      <Route path="/lichess" element={<PlayContainer />} />
-                      <Route path="/settings" element={<SettingsInput />} />
-                      <Route path="*" element={<Navigate to="/" />} />
-                    </Routes>
-                  </div>
-                </ChessProvider>
-              </CaptureProvider>
-            </SettingsProvider>
-          </AppSnackbarProvider>
-        </GlobalVariablesProvider>
+        <Provider>
+          <ResponsiveAppBar className="navbar" />
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<WelcomePage />} />
+              <Route path="/offline" element={<PlayContainer />} />
+              <Route path="/lichess" element={<PlayContainer />} />
+              <Route path="/settings" element={<SettingsInput />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </div>
+        </Provider>
       </Router>
     </ThemeProvider>
   );

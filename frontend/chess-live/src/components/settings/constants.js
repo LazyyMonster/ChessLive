@@ -19,7 +19,7 @@ export const HIGHLIGHTING_SQUARE_COLOR= "rgba(255, 190, 0, 0.5)";
 export const DIFFERENT_SQUARE_COLOR= "rgba(255, 0, 0, 0.5)";
 export const BOARD_SIZE = 500;  // px
 export const LIVE_BOARD_SIZE = 250;  // px
-export const ANIMATION_DURATION = 200;  // ms
+export const ANIMATION_DURATION = 100;  // ms
 
 // api paths
 export const LICHESS_BASE_ENDPOINT = "https://lichess.org";

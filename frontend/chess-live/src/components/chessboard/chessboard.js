@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Chessboard } from "react-chessboard";
 import { useChess } from "../../chessGame/chessGame";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import UpdateGame from "../../backendAPI/updateGame";
 import LiveChessboard from "./detectedBoard";
 import MainControls from "../layoutComponents/buttons/mainControls";
@@ -35,7 +36,18 @@ export default function CustomChessboard() {
 
   return (
     <>
-      <div className="CustomBoard">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          margin: 0,
+          padding: 0,
+          boxSizing: "border-box",
+        }}
+      >
         <Typography
           variant="h4"
           sx={{
@@ -124,13 +136,11 @@ export default function CustomChessboard() {
             </>
           )}
         </Stack>
-      </div>
-      <div className="LiveBoard">
-        <Stack direction="column" spacing={2} alignItems="center">
-          <LiveChessboard />
-          <MainControls />
-        </Stack>
-      </div>
+      </Box>
+      <Stack direction="column" spacing={2} alignItems="center">
+        <LiveChessboard />
+        <MainControls />
+      </Stack>
     </>
   );
 }
