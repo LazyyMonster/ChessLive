@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { VIDEO_WIDTH, VIDEO_HEIGHT, CAPTURED_IMAGE_WIDTH, CAPTURED_IMAGE_HEIGHT } from '../settings/constants';
-import { useSettings } from '../settings/settings';
+import { useGlobalVariables } from "../../globalVariables/globalVariables";
 
 export default function CanvasOverlay() {
     const canvasRef = useRef(null);
-    const { detectedCorners } = useSettings();
+    const { detectedCorners } = useGlobalVariables();
 
     useEffect(() => {
         const canvas = canvasRef.current;

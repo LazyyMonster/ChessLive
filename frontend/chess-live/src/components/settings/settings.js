@@ -7,7 +7,6 @@ const SettingsContext = createContext();
 export const SettingsProvider = ({ children }) => {
     const [cornersConf, setCornersConf] = useState(CORNERS_CONFIDENCE);
     const [piecesConf, setPiecesConf] = useState(PIECES_CONFIDENCE);
-    const [detectedCorners, setDetectedCorners] = useState(null);
     const [detectFrequency, setDetectFrequency] = useState(DETECT_FREQUENCY);
 
     const resetConfidences = () => {
@@ -25,12 +24,10 @@ export const SettingsProvider = ({ children }) => {
         piecesConf,
         setPiecesConf,
         resetConfidences,
-        detectedCorners,
-        setDetectedCorners,
         detectFrequency,
         setDetectFrequency,
         resetDetectFrequency,
-    }), [cornersConf, piecesConf, detectedCorners, detectFrequency]);
+    }), [cornersConf, piecesConf, detectFrequency]);
 
     return (
         <SettingsContext.Provider value={value}>

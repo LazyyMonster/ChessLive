@@ -6,10 +6,12 @@ import CameraView from "../components/camera/cameraView";
 import Button from "@mui/material/Button";
 import { showSnackbar } from "../components/alerts/customSnackbar";
 import { cornersRequest } from "./apiUtils";
+import { useGlobalVariables } from "../globalVariables/globalVariables";
 
 export default function DetectCorners() {
   const { capture, setWebcamRef } = useCapture();
-  const { cornersConf, setDetectedCorners } = useSettings();
+  const { cornersConf } = useSettings();
+  const { setDetectedCorners } = useGlobalVariables();
   const [loading, setLoading] = useState(false);
 
 

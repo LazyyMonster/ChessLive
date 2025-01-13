@@ -11,7 +11,8 @@ import { useLichess } from "../lichessAPI/lichessGame";
 export default function UpdateGame() {
     const { capture } = useCapture();
     const { isCapturing, setIsCapturing } = useGlobalVariables();
-    const { detectFrequency, detectedCorners, piecesConf } = useSettings();
+    const { detectFrequency, piecesConf } = useSettings();
+    const { detectedCorners } = useGlobalVariables();
     const {
         makeMove,
         returnAndMakeMove,
