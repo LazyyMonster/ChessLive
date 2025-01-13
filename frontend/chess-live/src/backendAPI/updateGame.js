@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useCapture } from "../components/camera/captureContext";
 import Button from "@mui/material/Button";
 import { useSettings } from "../components/settings/settings";
@@ -6,11 +6,12 @@ import { showSnackbar } from "../components/alerts/customSnackbar";
 import { useGlobalVariables } from "../globalVariables/globalVariables";
 import { useChess } from "../chessGame/chessGame";
 import { fenRequest } from "./apiUtils";
+import { useDetection } from "./detectionContext";
 import { useLichess } from "../lichessAPI/lichessGame";
 
 export default function UpdateGame() {
+    const { isCapturing, startDetection, stopDetection } = useDetection();
     const { capture } = useCapture();
-    const { isCapturing, setIsCapturing } = useGlobalVariables();
     const { detectFrequency, piecesConf } = useSettings();
     const { detectedCorners } = useGlobalVariables();
     const {
@@ -25,18 +26,7 @@ export default function UpdateGame() {
     } = useChess();
     const { sendMove, playerColor } = useLichess();
 
-    const intervalRef = useRef(null);
-
-    const stopDetection = useCallback(() => {
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-        }
-        setIsCapturing(false);
-    }, [setIsCapturing]);
-
     const detectPosition = useCallback(() => {
-
         if (isCapturing) {
             stopDetection();
             showSnackbar("Detecting position stopped!", "info");
@@ -54,35 +44,22 @@ export default function UpdateGame() {
         }
 
         showSnackbar("Detecting position started!", "success");
-        setIsCapturing(true);
 
-        intervalRef.current = setInterval(() => {
+        startDetection(() => {
             const image = capture();
             if (!detectedCorners) {
-                showSnackbar("Before starting following, you must detect 4 corners.", "error"); 
+                showSnackbar("Before starting following, you must detect 4 corners.", "error");
                 return;
             }
 
             if (!image) {
-                showSnackbar("No image available for detection.", "error"); 
+                showSnackbar("No image available for detection.", "error");
                 return;
             }
-            if (image) {
-                fenRequest(image, detectedCorners, piecesConf, setFenDetected);
-            }
+
+            fenRequest(image, detectedCorners, piecesConf, setFenDetected);
         }, detectFrequency);
-    }, [
-        isCapturing,
-        intervalRef,
-        stopDetection,
-        result,
-        detectedCorners,
-        piecesConf,
-        detectFrequency,
-        capture,
-        setFenDetected,
-        setIsCapturing,
-    ]);
+    }, [isCapturing, stopDetection, result, detectedCorners, piecesConf, detectFrequency, capture, setFenDetected, startDetection]);
 
     const handleMove = useCallback(() => {
         if (result !== "ongoing") return;

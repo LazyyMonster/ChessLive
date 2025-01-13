@@ -42,7 +42,7 @@ export const cornersRequest = async (image, cornersConf, setDetectedCorners) => 
         const lenCorners = cornerKeys.length;
         if (lenCorners !== 4) {
             setDetectedCorners(null);
-            showSnackbar(`Detected ${lenCorners} Try again detecting corners!`, "error");
+            showSnackbar(`Detected ${lenCorners} corners. Try again detecting corners!`, "error");
         }
         else {
             setDetectedCorners(detectedCorners);

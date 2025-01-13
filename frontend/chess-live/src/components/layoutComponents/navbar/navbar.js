@@ -10,21 +10,37 @@ import { useChess } from '../../../chessGame/chessGame.js';
 import LogoButton from '../buttons/logoButton.js';
 import CustomWhiteButton from '../buttons/customWhiteButton.js';
 import { useGlobalVariables } from '../../../globalVariables/globalVariables.js';
+import { showSnackbar } from '../../alerts/customSnackbar.js';
+import { STARTING_POSITION } from '../../settings/constants.js';
+import { useDetection } from '../../../backendAPI/detectionContext.js';
 
 const pages = [
-  { name: "Follow game offline", path: "/offline", isOnline: false },
-  { name: "Play with Lichess", path: "/lichess", isOnline: true },
+  { name: "Follow game offline", path: "/offline", isOnline: false, isPlayground: true},
+  { name: "Play with Lichess", path: "/lichess", isOnline: true, isPlayground: true },
   { name: "Settings", path: "/settings" }
 ];
 
 export default function ResponsiveAppBar() {
   const navigate = useNavigate();
   const { isAuthorized, username, profileUrl, lichessLogin, lichessLogout } = LichessOAuth();
-  const { setIsPlayingOnline, resetGame } = useChess();
-  const { setSelectedGameId } = useGlobalVariables();
+  const { setIsPlayingOnline, resetGame, setFenDetected } = useChess();
+  const { setSelectedGameId} = useGlobalVariables();
 
-  const handleButtonClick = (isOnline) => {
+  const { stopDetection } = useDetection();
+
+  const handleReset = () => {
+    stopDetection();
+    resetGame();
+    setSelectedGameId('');
+    setFenDetected(STARTING_POSITION);
+    showSnackbar("Board is ready!", "info");
+  };
+
+  const handleButtonClick = (isOnline, isPlayground) => {
     setIsPlayingOnline(isOnline);
+    if (isPlayground) {
+      handleReset();
+    }
   };
 
   const handleLogoutClick = () => {
@@ -58,7 +74,7 @@ export default function ResponsiveAppBar() {
                 key={page.name}
                 component={Link}
                 to={page.path}
-                onClick={() => handleButtonClick(page.isOnline)}
+                onClick={() => handleButtonClick(page.isOnline, page.isPlayground)}
                 sx={{ my: 2, display: 'block', ...fontStyles }}
               >
                 {page.name}

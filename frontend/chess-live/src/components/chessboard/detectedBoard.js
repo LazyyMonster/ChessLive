@@ -47,11 +47,6 @@ export default function LiveChessboard() {
   const actualFen = getFen().split(" ")[0];
   const squareStyles = findDifferences(actualFen, fenDetected);
 
-    //  useEffect(() => {
-    //       console.log("fen changed?");
-          
-    //   }, [fenDetected]);
-
   return (
     <>
       <Typography

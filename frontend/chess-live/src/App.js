@@ -6,11 +6,12 @@ import SettingsInput from "./components/layoutComponents/settings/settingsInput"
 import { CaptureProvider } from './components/camera/captureContext';
 import { ChessProvider } from "./chessGame/chessGame";
 import { SettingsProvider } from "./components/settings/settings";
+import { DetectionProvider } from "./backendAPI/detectionContext";
+import { ThemeProvider } from '@mui/material/styles';
 import AppSnackbarProvider from "./components/alerts/customSnackbar";
 import WelcomePage from "./components/layoutComponents/start/welcomePage";
 import PlayContainer from "./components/layoutComponents/main/playContainer";
 import { GlobalVariablesProvider } from "./globalVariables/globalVariables";
-import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from "./themes/theme";
 
@@ -28,6 +29,7 @@ const Provider = compose([
   SettingsProvider,
   CaptureProvider,
   ChessProvider,
+  DetectionProvider,
 ])
 
 function App() {
