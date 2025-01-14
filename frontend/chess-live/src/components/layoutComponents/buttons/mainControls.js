@@ -8,14 +8,19 @@ export default function MainControls() {
     const { isPlayingOnline } = useChess();
 
     return (
-        <>
-            <Stack direction="column" spacing={2} alignItems="center">
+        <div
+            style={{
+                width: "250px",
+                marginTop: "25px",
+            }}
+        >
+            <Stack direction="column" alignItems="center">
                 <ResetButton />
 
                 {isPlayingOnline && (
                     <LichessButtons />
                 )}
             </Stack>
-        </>
+        </div>
     );
 }

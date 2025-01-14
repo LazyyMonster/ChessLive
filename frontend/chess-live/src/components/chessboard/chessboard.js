@@ -35,16 +35,20 @@ export default function CustomChessboard() {
   };
 
   return (
-    <>
+    <Box
+        sx={{
+          gap: "25px",
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "100vh",
-          margin: 0,
-          padding: 0,
+          height: "100%",
           boxSizing: "border-box",
         }}
       >
@@ -66,7 +70,7 @@ export default function CustomChessboard() {
           arePiecesDraggable={false}
           animationDuration={ANIMATION_DURATION}
         />
-        <Stack direction="row" spacing={2} sx={{ marginTop: "16px" }}>
+        <Stack direction="row" spacing={2} sx={{ marginTop: "25px"}}>
           <Button
             variant="contained"
             onClick={toggleAnalysisMode}
@@ -137,10 +141,10 @@ export default function CustomChessboard() {
           )}
         </Stack>
       </Box>
-      <Stack direction="column" spacing={2} alignItems="center">
+      <Stack direction="column" spacing={2} alignItems="center" sx={{width: "300px"}}>
         <LiveChessboard />
         <MainControls />
       </Stack>
-    </>
+    </Box>
   );
 }

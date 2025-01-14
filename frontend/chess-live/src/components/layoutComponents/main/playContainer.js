@@ -15,10 +15,11 @@ export default function PlayContainer({ setDetectedCorners }) {
         sx={{
           backgroundColor: theme.palette.primary.main,
           display: "flex",
+          flexDirection: "row",
           height: "90%",
           width: "95%",
           margin: "auto",
-          padding: "16px",
+          padding: "25px",     
           borderRadius: "8px",
         }}
       >
@@ -29,7 +30,6 @@ export default function PlayContainer({ setDetectedCorners }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: "25px",
           }}
         >
           <CustomChessboard />
@@ -41,7 +41,6 @@ export default function PlayContainer({ setDetectedCorners }) {
             flex: 2,
             display: "flex",
             flexDirection: "column",
-            padding: "16px",
             gap: "25px",
           }}
         >

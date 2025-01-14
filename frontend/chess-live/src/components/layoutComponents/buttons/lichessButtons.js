@@ -127,9 +127,7 @@ export default function LichessButtons() {
   return (
     <div
       style={{
-        maxWidth: "300px",
-        margin: "0 auto",
-        padding: "1rem",
+        width: "100%",
       }}
     >
       <Typography

@@ -2,7 +2,7 @@ import React from "react";
 import { Chessboard } from "react-chessboard";
 import { useChess } from "../../chessGame/chessGame";
 import { ANIMATION_DURATION, DIFFERENT_SQUARE_COLOR, LIVE_BOARD_SIZE } from "../settings/constants";
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 const parseFen = (fen) => {
@@ -48,7 +48,12 @@ export default function LiveChessboard() {
   const squareStyles = findDifferences(actualFen, fenDetected);
 
   return (
-    <>
+    <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
       <Typography
         variant="h4"
         sx={{
@@ -68,6 +73,6 @@ export default function LiveChessboard() {
           customSquareStyles={squareStyles}
         />
       </Stack>
-    </>
+    </Box>
   );
 }
