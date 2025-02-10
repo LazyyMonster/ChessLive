@@ -2,27 +2,32 @@ import axios from "axios";
 import { showSnackbar } from "../components/alerts/customSnackbar";
 import { BACKEND_URL } from "../components/settings/constants";
 
-let isFENRequestInProgress = false;
 let isCornersRequestInProgress = false;
+// flaga zapobiegajaca wielokrotnemu wysylaniu zapytania w tym samym czasie
+let isFENRequestInProgress = false;
 
 export const fenRequest = async (image, detectedCorners, piecesConf, setFenDetected) => {
+
+    // sprawdzenie flagi
     if (isFENRequestInProgress) return;
     isFENRequestInProgress = true;
-
+    
     try {
+        // wyslanie zapytania POST do serwera z obrazem, polozeniem rogow i progiem detekcji figur
         const response = await axios.post(`${BACKEND_URL}/fen/`, {
             image,
             corners: detectedCorners,
             pieces_conf: piecesConf,
         });
-
+        // pobranie odpowiedzi z serwera i zachowanie zapisu FEN
         const fenDetected = response.data.fen;
         setFenDetected(fenDetected);
 
     } catch (err) {
-        const errorMessage = err.response?.data?.message || "Failed to detect pieces.";
-        showSnackbar(errorMessage, "error");
+        // wyswietlenie komunikatu o bledzie 
+        showSnackbar("Failed to detect pieces.", "error");
     } finally {
+        // umozliwienie wysylania kolejnych zapytan 
         isFENRequestInProgress = false;
     }
 };
@@ -42,7 +47,6 @@ export const cornersRequest = async (image, cornersConf, setDetectedCorners) => 
         const lenCorners = cornerKeys.length;
         if (lenCorners !== 4) {
             setDetectedCorners(null);
-            // showSnackbar(`Detected ${lenCorners} corners. Try again detecting corners!`, "error");
             showSnackbar("Try again detecting corners!", "error");
         }
         else {

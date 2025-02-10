@@ -1,29 +1,31 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Chess } from 'chess.js';
 
+// tworzenie kontekstu w aplikacji React
 const ChessContext = createContext();
 
+// stale przechowujace reprezentacje pozycji startowej
 export const STARTING_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 export const STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-
+// komponent udostepniajacy stan gry
 export const ChessProvider = ({ children }) => {
-  //Live game variables
+
+  // zmienne przechowujace stan gry
   const [game, setGame] = useState(new Chess(STARTING_FEN));
   const [result, setResult] = useState("ongoing");
-
-  //Shared variable livae and analysis
   const [lastMove, setLastMove] = useState(null);
   const [fen, setFen] = useState(game.fen());
-
+  
+  // zmienna przechowujaca ostatnio wykryta pozycja
   const [fenDetected, setFenDetected] = useState(STARTING_POSITION);
 
-  //Analysis game variables
+  // zmienne wykorzystywane w trybie analizy partii
   const [analysisGame, setAnalysisGame] = useState(new Chess(STARTING_FEN));
   const [isAnalysisMode, setIsAnalysisMode] = useState(false);
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
 
-  //Playing mode variables
+  // zmienna z okresleniem trybu gry
   const [isPlayingOnline, setIsPlayingOnline] = useState(true);
 
   const setFenAndLastMove = (chess) => {

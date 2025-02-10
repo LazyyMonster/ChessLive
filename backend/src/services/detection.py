@@ -3,6 +3,9 @@ from ultralytics import YOLO
 corner_model = YOLO("models/best_corners.pt")
 pieces_model = YOLO("models/best_pieces_real_plus_synth.pt")
 
+# pieces_model = YOLO("models/best_pieces_real_only.pt")
+# pieces_model = YOLO("models/best.pt")
+
 
 def detect_corners(image, confidence):
     results = corner_model.predict(source=image, conf=confidence, save=False)

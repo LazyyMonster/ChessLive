@@ -8,40 +8,55 @@ import base64
 
 router = APIRouter()
 
+# punkt zwracający wykrytą pozycję w postaci FEN
 @router.post("/")
 async def fen_from_image(data: dict):
     try:
+        # pobranie przekazanych danych
         image_base64 = data.get("image")
         corners = data.get("corners")
         pieces_conf = data.get("pieces_conf")
 
-        if not image_base64 or not corners or pieces_conf is None:
+        # sprawdzenie obecności wszystkich argumentów
+        if not image_base64:
             raise HTTPException(
-                status_code=400, detail="Missing 'image', 'corners', or 'pieces_conf'."
+                status_code=400, detail="Missing image."
+            )
+        if not corners:
+            raise HTTPException(
+                status_code=400, detail="Missing corners."
+            )
+        if not pieces_conf:
+            raise HTTPException(
+                status_code=400, detail="Missing pieces_conf."
             )
 
-        if image_base64.startswith("data:image"):
-            image_base64 = image_base64.split(",")[1]
-            image_bytes = base64.b64decode(image_base64)
-            image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+        # konwersja obrazu z base64 do formatu obrazu openCV
+        image_base64 = image_base64.split(",")[1]
+        image_bytes = base64.b64decode(image_base64)
+        image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
 
-            ordered_corners = [
-                corners["A1"],
-                corners["A8"],
-                corners["H8"],
-                corners["H1"]
-            ]
+        # uporządkowanie rogów szachownicy w odpowiedniej kolejności
+        ordered_corners = [
+            corners["A1"],
+            corners["A8"],
+            corners["H8"],
+            corners["H1"]
+        ]
 
+        # wycięcie szachownicy z obrazu
         transformed_image = cut_chessboard(image, ordered_corners)
 
+        # detekcja figur na wyciętym obrazie
         pieces, boxes = detect_pieces(transformed_image, pieces_conf)
 
-        # Handle case where no pieces are detected
+        # brak wykrytych figur, zwracana pusta szachownica
         if len(pieces) == 0:
-            return {"fen": "8/8/8/8/8/8/8/8"}  # Return empty board FEN
+            return {"fen": "8/8/8/8/8/8/8/8"}
 
+        # generowanie i zwracanie notacji FEN 
         fen = make_fen(pieces, boxes, transformed_image)
         return {"fen": fen}
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error when generating FEN: {str(e)}")

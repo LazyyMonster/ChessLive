@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, HTTPException
+from fastapi import APIRouter, HTTPException
 from src.services.detection import detect_corners
 from src.services.transformation import order_corners
 
@@ -9,16 +9,20 @@ import cv2
 router = APIRouter()
 
 @router.post("/")
-async def detect_corners_endpoint(data: dict):
+async def corners_from_image(data: dict):
     try:
         image_base64 = data.get("image")
         corners_conf = data.get("corners_conf")
         
-        if not image_base64 or corners_conf is None:
+        if not image_base64:
             raise HTTPException(
-                status_code=400, detail="Missing 'image' or 'corners_conf'."
+                status_code=400, detail="Missing image."
             )
-
+        if not corners_conf:
+            raise HTTPException(
+                status_code=400, detail="Missing corners_conf."
+            )
+        
         if image_base64.startswith("data:image"):
             image_base64 = image_base64.split(",")[1]
             image_bytes = base64.b64decode(image_base64)
