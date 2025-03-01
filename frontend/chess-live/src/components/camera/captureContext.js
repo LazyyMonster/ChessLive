@@ -25,16 +25,6 @@ export function CaptureProvider({ children }) {
         return imageSrc;
     };
 
-    // useEffect(() => {
-    //     console.log("cleaning");
-    //     return () => {
-    //         if (webcamRef.current && webcamRef.current.srcObject) {
-    //             const tracks = webcamRef.current.srcObject.getTracks();
-    //             tracks.forEach((track) => track.stop());
-    //         }
-    //     };
-    // }, []);
-
     return (
         <CaptureContext.Provider value={{ capture, setWebcamRef, webcamRef }}>
             {children}

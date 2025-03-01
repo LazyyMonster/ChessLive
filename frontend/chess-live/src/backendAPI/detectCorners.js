@@ -45,7 +45,6 @@ export default function DetectCorners() {
         color="secondary"
         disabled={loading}
         sx={{
-          // marginTop: "10px",
           width: "100%",
         }}
       >

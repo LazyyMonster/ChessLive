@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from src.services.detection import detect_corners
-from src.services.transformation import order_corners
+from app.src.services.detection import detect_corners
+from app.src.services.transformation import order_corners
 
 import numpy as np
 import base64
