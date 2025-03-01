@@ -1,10 +1,10 @@
 from ultralytics import YOLO
 
-corner_model = YOLO("models/best_corners.pt")
-pieces_model = YOLO("models/best_pieces_real_plus_synth.pt")
+corner_model = YOLO("app/models/best_corners.pt")
+pieces_model = YOLO("app/models/best_pieces_real_plus_synth.pt")
 
-# pieces_model = YOLO("models/best_pieces_real_only.pt")
-# pieces_model = YOLO("models/best.pt")
+# pieces_model = YOLO("app/models/best_pieces_real_only.pt")
+# pieces_model = YOLO("app/models/best.pt")
 
 
 def detect_corners(image, confidence):

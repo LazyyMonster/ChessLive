@@ -1,6 +1,6 @@
 import numpy as np
 from shapely.geometry import Polygon
-from src.services.grid import make_grid_pts
+from app.src.services.grid import make_grid_pts
 
 def calculateIoU(box1, box2):
     poly1 = Polygon(box1)

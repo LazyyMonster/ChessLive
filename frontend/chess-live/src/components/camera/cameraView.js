@@ -31,7 +31,6 @@ const CameraView = forwardRef((props, ref) => {
         backgroundColor: "#000",
       }}
     >
-      {/* Skeleton placeholder */}
       <Skeleton
         variant="rectangular"
         animation="wave"
@@ -45,7 +44,6 @@ const CameraView = forwardRef((props, ref) => {
         }}
       />
 
-      {/* Camera */}
       <Webcam
         audio={false}
         ref={(webcamInstance) => {

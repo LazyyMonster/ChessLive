@@ -133,7 +133,6 @@ export default function ChessPGNdisplay() {
         </div>
       </div>
 
-        {/* Result Footer */}
       {result !== "ongoing" && (
         <Typography
           variant="h6"
